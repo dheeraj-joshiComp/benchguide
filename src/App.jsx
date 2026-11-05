@@ -178,6 +178,13 @@ function Hero() {
   )
 }
 
+// React does not write `muted` as an attribute, which some browsers need before they allow autoplay.
+const autoplay = (v) => {
+  if (!v) return
+  v.muted = true
+  v.play?.().catch(() => {})
+}
+
 function HeroMedia() {
   const phone = useIsPhone()
   const still = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
@@ -185,7 +192,7 @@ function HeroMedia() {
     <div className="photo">
       {phone || still
         ? <img src={PHOTOS.hero} alt="A woman working on her laptop at home" width="1600" height="1200" />
-        : <video src={PHOTOS.heroVideo} poster={PHOTOS.hero} autoPlay muted loop playsInline aria-label="A woman working on her laptop at home" />}
+        : <video ref={autoplay} src={PHOTOS.heroVideo} poster={PHOTOS.hero} autoPlay muted loop playsInline aria-label="A woman working on her laptop at home" />}
     </div>
   )
 }
