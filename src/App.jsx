@@ -86,27 +86,88 @@ function useStored(key, initial) {
   return [value, setValue]
 }
 
+const DEMO_APPS = ['Gmail', 'Sheets', 'Docs', 'Notion']
+const DEMO_LEN = 7000 // ms per loop
+
+// Looping mock of a BenchChat session: tokens climb, apps light up, payout grows.
+function Demo() {
+  const [t, setT] = useState(0)
+  useEffect(() => {
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) { setT(DEMO_LEN); return }
+    const start = performance.now()
+    let raf
+    const tick = (now) => { setT((now - start) % (DEMO_LEN + 1500)); raf = requestAnimationFrame(tick) }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [])
+  const p = Math.min(t / DEMO_LEN, 1)
+  const tokens = Math.round(25400 * (1 - (1 - p) ** 2))
+  const lit = Math.min(DEMO_APPS.length, Math.floor(p * (DEMO_APPS.length + 1)))
+  const earned = (tokens >= 25000 ? REWARDS.base : 0) + Math.min(lit * REWARDS.perApp, REWARDS.appCap)
+  const approved = p >= 1
+  return (
+    <div className="demo" aria-hidden="true">
+      <div className="demo-bar">
+        <span className="dots"><i /><i /><i /></span>
+        <span className="demo-title">BenchChat</span>
+        <span className={tokens >= 25000 ? 'demo-tokens hit' : 'demo-tokens'}>
+          <Icon name="zap" size={12} />{tokens.toLocaleString('en-IN')} action tokens
+        </span>
+      </div>
+      <div className="demo-body">
+        <div className="msg you">Find 25 remote analyst jobs, rank them in a Sheet and draft cover letters in Docs.</div>
+        <div className={p > .15 ? 'msg ai show' : 'msg ai'}>
+          <span className="typing"><i /><i /><i /></span> Researching 3 sources, building your sheet…
+        </div>
+        <div className={p > .55 ? 'msg you show' : 'msg you'}>Add 10 more and write a second draft for #2.</div>
+        <div className="demo-meter"><span style={{ width: `${Math.min(tokens / 250, 100)}%` }} /><em>25k</em></div>
+        <div className="demo-apps">
+          {DEMO_APPS.map((a, i) => (
+            <span key={a} className={i < lit ? 'dapp on' : 'dapp'}>{a}{i < lit && <b>+₹{REWARDS.perApp}</b>}</span>
+          ))}
+        </div>
+      </div>
+      <div className="demo-foot">
+        <span>Your payout</span>
+        <b>₹{earned}</b>
+        {approved && <span className="stamp">Approved ✓</span>}
+      </div>
+    </div>
+  )
+}
+
+const MARQUEE = ['Gmail', 'Google Sheets', 'Google Docs', 'Notion', 'Slack', 'Google Calendar', 'Google Drive', 'Web search', 'Firecrawl', 'Exa', 'People Data Labs', 'ElevenLabs']
+
 function Hero() {
   return (
     <header className="hero" id="top">
-      <div className="wrap hero-inner">
-        <span className="pill">5 steps · about 30–45 min</span>
-        <h1>Earn up to ₹{REWARDS.maxPerTask} for one real task with AI</h1>
-        <p className="lede">Use apps you already have. Finish the task. Get paid.</p>
+      <div className="wrap hero-grid">
+        <div className="hero-copy">
+          <span className="pill"><span className="live" />Paid study · open now</span>
+          <h1>Earn up to <mark>₹{REWARDS.maxPerTask}</mark> for one real task with AI</h1>
+          <p className="lede">Use apps you already have. Finish the task. Get paid.</p>
+          <div className="cta">
+            <a className="btn primary" href="#quest">Get started <Icon name="arrow" size={16} /></a>
+            <a className="btn" href="#video">Watch 1-min video</a>
+          </div>
+          <div className="trust">
+            <span>Free to join</span>
+            <span>Never asks for money</span>
+            <span>Paid in 2–3 days</span>
+          </div>
+        </div>
+        <Demo />
+      </div>
+      <div className="wrap">
         <div className="ladder" aria-label="Rewards">
-          <div className="rung"><b>+₹{REWARDS.perApp}</b><span>each app you use</span></div>
-          <div className="rung big"><b>₹{REWARDS.base}</b><span>task done, 25k+ tokens</span></div>
-          <div className="rung"><b>+₹{REWARDS.streak}</b><span>at {REWARDS.streakAt} tasks</span></div>
+          <div className="rung"><small>Small wins</small><b>+₹{REWARDS.perApp}</b><span>each app you use</span></div>
+          <div className="rung big"><small>Main reward</small><b>₹{REWARDS.base}</b><span>task done, 25k+ tokens</span></div>
+          <div className="rung"><small>Big bonus</small><b>+₹{REWARDS.streak}</b><span>at {REWARDS.streakAt} approved tasks</span></div>
         </div>
-        <div className="cta">
-          <a className="btn primary" href="#quest">Get started</a>
-          <a className="btn" href="#video">Watch 1-min video</a>
-        </div>
-        <div className="trust">
-          <span>Free to join</span>
-          <span>We never ask for money or passwords</span>
-          <span>Every task reviewed by a person</span>
-          <span>Paid by UPI or bank in 2–3 days</span>
+      </div>
+      <div className="marquee" aria-label="Works with">
+        <div className="track">
+          {[...MARQUEE, ...MARQUEE].map((m, i) => <span key={i}>{m}</span>)}
         </div>
       </div>
     </header>
