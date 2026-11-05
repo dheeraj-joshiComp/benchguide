@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import {
-  LINKS, VIDEO, STRIP, BEFORE, PAYMENT, PAYMENT_RULES,
+  LINKS, VIDEO, BEFORE, PAYMENT, PAYMENT_RULES,
   STEPS, TOKENS, PROMPTS, REQUIREMENTS, IDEAS, REWARDS, BONUS_APPS, QUEST,
 } from './content'
 
@@ -15,6 +15,10 @@ const ICONS = {
   check: 'M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4 12 14.01l-3-3',
   wallet: 'M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4',
   arrow: 'M5 12h14M12 5l7 7-7 7',
+  chevron: 'M9 6l6 6-6 6',
+  image: 'M3 5h18v14H3zM3 16l5-5 4 4 3-3 6 6M15.5 9.5h.01',
+  copy: 'M9 9h11v11H9zM5 15H4V4h11v1',
+  bulb: 'M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3',
 }
 
 function Icon({ name, size = 14 }) {
@@ -59,25 +63,13 @@ function Nav() {
   return (
     <nav>
       <div className="bar">
-        <a className="brand" href="#top">BenchChat <Badge kind="green">Study</Badge></a>
+        <a className="brand" href="#top"><span className="logo"><Icon name="zap" size={14} /></span>BenchChat study</a>
         <div className="links">
-          <a href="#quest">Quest</a>
+          <a href="#quest">How it works</a>
           <a href="#payment">Rewards</a>
-          <a href="#steps">Steps</a>
-          <a href="#tokens">Tokens</a>
-          <a href="#prompts">Prompts</a>
-          <a href="#requirements">Rules</a>
+          <a href="#guide">Guide</a>
         </div>
-        <Button href={LINKS.form} primary>Submit</Button>
-      </div>
-      <div className="strip">
-        {STRIP.map((s) => (
-          <span className="stat" key={s.label}>
-            <Icon name={s.icon} />
-            <span className="k">{s.label}</span>
-            <span className="v">{s.value}</span>
-          </span>
-        ))}
+        <Button href={LINKS.form} primary>Submit task</Button>
       </div>
     </nav>
   )
@@ -97,10 +89,9 @@ function useStored(key, initial) {
 function Hero() {
   return (
     <header className="hero" id="top">
-      <div className="wash" aria-hidden="true" />
       <div className="wrap hero-inner">
-        <span className="badge green">5 levels · about 30–45 min</span>
-        <h1>Earn up to <span className="hl">₹{REWARDS.maxPerTask}</span> for one real task with AI</h1>
+        <span className="pill">5 steps · about 30–45 min</span>
+        <h1>Earn up to ₹{REWARDS.maxPerTask} for one real task with AI</h1>
         <p className="lede">Use apps you already have. Finish the task. Get paid.</p>
         <div className="ladder" aria-label="Rewards">
           <div className="rung"><b>+₹{REWARDS.perApp}</b><span>each app you use</span></div>
@@ -108,7 +99,7 @@ function Hero() {
           <div className="rung"><b>+₹{REWARDS.streak}</b><span>at {REWARDS.streakAt} tasks</span></div>
         </div>
         <div className="cta">
-          <a className="btn primary" href="#quest">Start the quest</a>
+          <a className="btn primary" href="#quest">Get started</a>
           <a className="btn" href="#video">Watch 1-min video</a>
         </div>
         <div className="trust">
@@ -122,7 +113,7 @@ function Hero() {
   )
 }
 
-function Quest() {
+function Quest({ onOpen }) {
   const [done, setDone] = useStored('quest-done', [])
   const [apps, setApps] = useStored('quest-apps', [])
   const toggle = (set, id) => set((list) => (list.includes(id) ? list.filter((x) => x !== id) : [...list, id]))
@@ -132,13 +123,13 @@ function Quest() {
   return (
     <section id="quest">
       <div className="wrap">
-        <SectionHead label="Your quest" title="Five levels to your payout">
-          Tick each level as you go. Your progress is saved in this browser.
+        <SectionHead label="How it works" title="5 steps to get paid">
+          Tick each step as you go.
         </SectionHead>
         <div className="meter" role="progressbar" aria-valuenow={progress} aria-valuemin="0" aria-valuemax="100">
           <span style={{ width: `${progress}%` }} />
         </div>
-        <span className="label block meter-label">{done.length} / {QUEST.length} levels done</span>
+        <span className="label block meter-label">{done.length} of {QUEST.length} done</span>
         <ol className="quest">
           {QUEST.map((q, i) => {
             const isDone = done.includes(q.id)
@@ -151,6 +142,12 @@ function Quest() {
                 <div className="level-body">
                   <h3>{q.title}</h3>
                   <p>{q.hint}</p>
+                  {q.img && (
+                    <button type="button" className="thumb" onClick={() => onOpen({ src: q.img, alt: q.title, caption: q.title })}
+                      aria-label={`Enlarge screenshot: ${q.title}`}>
+                      <img src={q.img} alt="" loading="lazy" width="1800" height="1130" />
+                    </button>
+                  )}
                   {q.id === 'connect' && (
                     <div className="apps">
                       {BONUS_APPS.map((a) => (
@@ -174,7 +171,7 @@ function Quest() {
         </ol>
         <div className="total">
           <div>
-            <span className="label">If this task is approved</span>
+            <span className="label">Your payout if approved</span>
             <b>₹{total}</b>
             <span className="sub">₹{REWARDS.base} base + ₹{appBonus} app bonus{apps.length * REWARDS.perApp > REWARDS.appCap ? ` (capped at ₹${REWARDS.appCap})` : ''}</span>
           </div>
@@ -185,19 +182,25 @@ function Quest() {
   )
 }
 
-const GUIDE = [
-  { href: '#steps', text: 'Step-by-step screenshots' },
-  { href: '#tokens', text: 'How to reach 25,000 tokens' },
-  { href: '#prompts', text: 'Ready prompts to copy' },
-  { href: '#requirements', text: 'Approval rules' },
-]
+function Fold({ id, icon, title, children }) {
+  return (
+    <details className="fold" id={id}>
+      <summary><Icon name="chevron" size={16} /><Icon name={icon} size={16} />{title}</summary>
+      <div className="fold-body">{children}</div>
+    </details>
+  )
+}
 
-function Guide() {
+function Guide({ onOpen }) {
   return (
     <section id="guide">
       <div className="wrap">
-        <SectionHead label="Full guide" title="Need more detail?">Jump to what you need.</SectionHead>
-        <div className="chips">{GUIDE.map((g) => <a className="chip link" href={g.href} key={g.href}>{g.text} →</a>)}</div>
+        <SectionHead label="Guide" title="Need help?">Open only what you need.</SectionHead>
+        <Fold id="steps" icon="image" title="Step-by-step with screenshots"><Steps onOpen={onOpen} /></Fold>
+        <Fold id="tokens" icon="zap" title="How to reach 25,000 action tokens"><Tokens /></Fold>
+        <Fold id="prompts" icon="copy" title="Ready prompts to copy"><Prompts /></Fold>
+        <Fold id="requirements" icon="check" title="Full approval rules"><Requirements /></Fold>
+        <Fold id="ideas" icon="bulb" title="More task ideas"><Ideas /></Fold>
       </div>
     </section>
   )
@@ -207,11 +210,11 @@ function Before() {
   return (
     <section id="start">
       <div className="wrap">
-        <SectionHead label="Before you start" title="Three rules for every task" />
+        <SectionHead label="Rules" title="Three things we check" />
         <div className="grid g3">
           {BEFORE.map((b) => (
-            <div className="panel" key={b.title}>
-              <Badge kind="amber">{b.tag}</Badge>
+            <div className="panel rule" key={b.title}>
+              <span className="rule-icon"><Icon name={b.icon} size={20} /></span>
               <h3>{b.title}</h3>
               <p>{b.text}</p>
             </div>
@@ -246,8 +249,8 @@ function Video() {
   return (
     <section id="video">
       <div className="wrap">
-        <SectionHead label="Video" title="Watch the whole flow in one minute">
-          Sign up, connect an app, turn on Instant Tools and watch the action-token count grow. The steps below show each screen.
+        <SectionHead label="Video" title="See it in one minute">
+          Sign up, connect an app, and watch the token count grow.
         </SectionHead>
         <div className="frame">
           <video src={VIDEO.src} poster={VIDEO.poster} controls muted playsInline preload="metadata" />
@@ -271,11 +274,8 @@ function Figure({ media, onOpen }) {
 
 function Steps({ onOpen }) {
   return (
-    <section id="steps">
-      <div className="wrap">
-        <SectionHead label="Steps" title="How to do it, step by step">
-          The numbered boxes in each screenshot show exactly where to click.
-        </SectionHead>
+    <>
+        <p className="sub">The numbered boxes in each screenshot show exactly where to click.</p>
         <ol className="steps">
           {STEPS.map((s, i) => (
             <li className="step" key={s.title}>
@@ -296,18 +296,14 @@ function Steps({ onOpen }) {
             </li>
           ))}
         </ol>
-      </div>
-    </section>
+    </>
   )
 }
 
 function Tokens() {
   return (
-    <section id="tokens">
-      <div className="wrap">
-        <SectionHead label="Action tokens" title="How action tokens work">
-          Action tokens measure how much real work the AI does for you. Your chat must go above 25,000.
-        </SectionHead>
+    <>
+        <p className="sub">Action tokens measure how much real work the AI does for you. Your chat must go above 25,000.</p>
         <div className="grid g2">
           <div className="panel">
             <span className="label green">Counted</span>
@@ -322,8 +318,7 @@ function Tokens() {
         <h3 className="spaced">How to reach 25,000 with real work</h3>
         <ul className="list">{TOKENS.tips.map((t, i) => <li key={i}><Rich value={t} /></li>)}</ul>
         <p className="note amber">{TOKENS.warning}</p>
-      </div>
-    </section>
+    </>
   )
 }
 
@@ -343,12 +338,9 @@ function CopyButton({ text }) {
 
 function Prompts() {
   return (
-    <section id="prompts">
-      <div className="wrap">
-        <SectionHead label="Prompts" title="Example prompts">
-          Replace everything in [brackets] with your own real details. Each one writes a lot into Google Sheets, Google Docs
-          or Notion, which is what grows the action-token count. Instant Tools are optional but make these richer.
-        </SectionHead>
+    <>
+        <p className="sub">Replace everything in [brackets] with your own real details. Each one writes a lot into Google Sheets, Google Docs
+          or Notion, which is what grows the action-token count. Instant Tools are optional but make these richer.</p>
         <div className="prompts">
           {PROMPTS.map((p) => (
             <article className="prompt" key={p.tag}>
@@ -363,34 +355,27 @@ function Prompts() {
             </article>
           ))}
         </div>
-      </div>
-    </section>
+    </>
   )
 }
 
 function Requirements() {
   return (
-    <section id="requirements">
-      <div className="wrap">
-        <SectionHead label="Approval" title="Requirements for approval and payment">
-          Your task is approved and paid only if all of these are true.
-        </SectionHead>
+    <>
+        <p className="sub">Your task is approved and paid only if all of these are true.</p>
         <ol className="rows">
           {REQUIREMENTS.map((r, i) => (
             <li key={i}><span className="label">{pad(i + 1)}</span><div><Rich value={r} /></div></li>
           ))}
         </ol>
-      </div>
-    </section>
+    </>
   )
 }
 
 function Ideas() {
   return (
-    <section id="ideas">
-      <div className="wrap">
-        <SectionHead label="Ideas" title="More task ideas" />
-        <div className="cards three">
+    <>
+                <div className="cards three">
           {IDEAS.map((idea) => (
             <div className="card static" key={idea.tag}>
               <span>{idea.text}</span>
@@ -399,8 +384,7 @@ function Ideas() {
           ))}
         </div>
         <p className="sub spaced">Or anything else from your own daily work. <a href={LINKS.moreIdeas} {...ext}>More ideas</a></p>
-      </div>
-    </section>
+    </>
   )
 }
 
@@ -457,16 +441,11 @@ export default function App() {
     <>
       <Nav />
       <Hero />
-      <Quest />
-      <Before />
+      <Quest onOpen={setOpen} />
       <Video />
+      <Before />
       <Payment />
-      <Guide />
-      <Steps onOpen={setOpen} />
-      <Tokens />
-      <Prompts />
-      <Requirements />
-      <Ideas />
+      <Guide onOpen={setOpen} />
       <SubmitBand />
       <footer>
         <div className="wrap">

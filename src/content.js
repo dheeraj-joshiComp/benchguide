@@ -37,10 +37,10 @@ export const BONUS_APPS = [
 
 // The quest: short levels shown right under the hero. `reward` is what the level unlocks.
 export const QUEST = [
-  { id: 'signup', title: 'Sign up on BenchChat', hint: 'Continue with Google takes 30 seconds.', href: LINKS.bench, cta: 'Open BenchChat' },
-  { id: 'connect', title: 'Connect your apps', hint: 'Switch → For You → Connect. Each app you really use pays a bonus.', reward: `+₹${REWARDS.perApp} each` },
-  { id: 'task', title: 'Give it one real task in English', hint: 'Several steps, several apps. Copy a prompt below if you need one.', href: '#prompts', cta: 'See prompts', external: false },
-  { id: 'tokens', title: 'Keep going past 25,000 action tokens', hint: 'Counter is at the top right. Ask for fixes, more detail, a second draft.', reward: `₹${REWARDS.base}` },
+  { id: 'signup', img: img('sign-up'), title: 'Sign up on BenchChat', hint: 'Continue with Google takes 30 seconds.', href: LINKS.bench, cta: 'Open BenchChat' },
+  { id: 'connect', img: img('dashboard-apps-instant'), title: 'Connect your apps', hint: 'Switch → For You → Connect. Each app you really use pays a bonus.', reward: `+₹${REWARDS.perApp} each` },
+  { id: 'task', img: img('type-task'), title: 'Give it one real task in English', hint: 'Several steps, several apps. Copy a prompt below if you need one.', href: '#prompts', cta: 'See prompts', external: false },
+  { id: 'tokens', img: img('multi-turn-tokens'), title: 'Keep going past 25,000 action tokens', hint: 'Counter is at the top right. Ask for fixes, more detail, a second draft.', reward: `₹${REWARDS.base}` },
   { id: 'submit', title: 'Submit your chat link', hint: 'Only after the task is complete.', href: LINKS.form, cta: 'Open form' },
 ]
 
@@ -53,9 +53,9 @@ export const STRIP = [
 ]
 
 export const BEFORE = [
-  { tag: 'Required', title: 'Over 25,000 action tokens', text: 'Your conversation must go above 25,000 action tokens. Under 25,000 is not approved and not paid, even if the task is good.' },
-  { tag: 'Required', title: 'Everything in English', text: 'Your task, every message you send and the final result must all be in English. Non-English chats are not approved.' },
-  { tag: 'Required', title: 'A real, genuine task', text: 'Use a real task from your work or daily life and stay with it until it is complete. Fake, repeated or filler prompts are rejected.' },
+  { icon: 'zap', title: '25,000+ action tokens', text: 'Under 25,000 is not paid.' },
+  { icon: 'globe', title: 'English only', text: 'Every message and the result.' },
+  { icon: 'check', title: 'A real, finished task', text: 'No filler, no coding.' },
 ]
 
 export const PAYMENT = [
