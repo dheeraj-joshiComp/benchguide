@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import {
   LINKS, VIDEO, BEFORE, 
-  STEPS, TOKENS, PROMPTS, REQUIREMENTS, IDEAS, REWARDS, BONUS_APPS, QUEST,
+  STEPS, TOKENS, PHOTOS, PROMPTS, REQUIREMENTS, IDEAS, REWARDS, BONUS_APPS, QUEST,
 } from './content'
 
 const ext = { target: '_blank', rel: 'noopener noreferrer' }
@@ -139,27 +139,56 @@ function Demo() {
 function Hero() {
   return (
     <header className="hero" id="top">
-      <div className="wrap hero-grid">
-        <div className="hero-copy">
-          <p className="eyebrow">Paid research study</p>
-          <h1>Get paid to use AI on your real work</h1>
-          <p className="lede">
-            Do one real task with BenchChat, an AI assistant that works inside Gmail, Sheets, Docs and Notion.
-            Earn ₹{REWARDS.base} for each approved task, plus bonuses.
-          </p>
-          <div className="cta">
-            <a className="btn primary" href="#quest">Start earning</a>
-            <a className="text-link" href="#payment">See how pay works <Icon name="arrow" size={15} /></a>
+      <div className="wrap">
+        <div className="hero-top">
+          <div>
+            <p className="eyebrow">Paid research study</p>
+            <h1>Get paid to use AI on your real work</h1>
           </div>
-          <dl className="facts">
-            <div><dt>₹{REWARDS.base}</dt><dd>per approved task</dd></div>
-            <div><dt>2–3 days</dt><dd>to your bank or UPI</dd></div>
-            <div><dt>Free</dt><dd>no fees, ever</dd></div>
-          </dl>
+          <div className="hero-side">
+            <p className="lede">
+              Do one real task with BenchChat, an AI assistant that works inside Gmail, Sheets, Docs and Notion.
+              Earn ₹{REWARDS.base} for each approved task, plus bonuses.
+            </p>
+            <div className="cta">
+              <a className="btn primary" href="#quest">Start earning</a>
+              <a className="text-link" href="#payment">See how pay works <Icon name="arrow" size={15} /></a>
+            </div>
+          </div>
         </div>
-        <div className="stage"><Demo /></div>
+        <div className="hero-media">
+          <div className="photo"><img src={PHOTOS.hero} alt="A woman working on her laptop at home" width="1440" height="1080" /></div>
+          <div className="stage"><Demo /></div>
+        </div>
+        <dl className="facts">
+          <div><dt>₹{REWARDS.base}</dt><dd>per approved task</dd></div>
+          <div><dt>+₹{REWARDS.perApp}</dt><dd>for each app you use</dd></div>
+          <div><dt>2–3 days</dt><dd>to your bank or UPI</dd></div>
+          <div><dt>Free</dt><dd>no fees, ever</dd></div>
+        </dl>
       </div>
     </header>
+  )
+}
+
+function Who() {
+  const points = [
+    { title: 'Use your own apps', text: 'Gmail, Google Sheets, Docs, Notion, Slack. Whatever you already work in.' },
+    { title: 'Bring a real task', text: 'Something you would do anyway: research, a report, a tracker, a plan.' },
+    { title: 'About 30–45 minutes', text: 'From home, on a laptop. No coding and no experience with AI needed.' },
+  ]
+  return (
+    <section id="who">
+      <div className="wrap split">
+        <div className="photo tall"><img src={PHOTOS.who} alt="A man working on a laptop in a cafe" loading="lazy" width="900" height="1200" /></div>
+        <div>
+          <SectionHead label="Who it's for" title="Students, freelancers and professionals" />
+          <div className="points">
+            {points.map((p) => <div key={p.title}><h3>{p.title}</h3><p>{p.text}</p></div>)}
+          </div>
+        </div>
+      </div>
+    </section>
   )
 }
 
@@ -285,6 +314,7 @@ function Payment() {
     <section id="payment">
       <div className="wrap">
         <SectionHead label="Pay" title="What you earn">Up to ₹{REWARDS.maxPerTask} for a single task. Paid to your bank or UPI in about 2–3 days after approval.</SectionHead>
+        <div className="pay-wrap">
         <div className="pay">
           {rows.map((r) => (
             <div className="pay-row" key={r.title}>
@@ -292,6 +322,14 @@ function Payment() {
               <div><h3>{r.title}</h3><p>{r.when}</p></div>
             </div>
           ))}
+        </div>
+        <div className="photo">
+          <img src={PHOTOS.pay} alt="Checking a payment on a phone" loading="lazy" width="1400" height="1050" />
+          <div className="toast" aria-hidden="true">
+            <span className="toast-icon"><Icon name="check" size={16} /></span>
+            <div><b>₹{REWARDS.maxPerTask} received</b><span>BenchChat Study · task approved</span></div>
+          </div>
+        </div>
         </div>
         <p className="fine">Every task is reviewed by a person. Unfinished, non-English or padded chats are not paid, and app bonuses only count on approved tasks.</p>
       </div>
@@ -512,10 +550,11 @@ export default function App() {
     <>
       <Nav />
       <Hero />
+      <Who />
       <Quest onOpen={setOpen} />
-      <Video />
-      <Before />
       <Payment />
+      <Before />
+      <Video />
       <Guide onOpen={setOpen} />
       <SubmitBand />
       <footer>

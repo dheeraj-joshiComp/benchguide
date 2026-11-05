@@ -11,6 +11,13 @@ export const VIDEO = {
   poster: '/media/bench-howto-poster.jpg',
 }
 
+// Photos generated with Higgsfield (Soul V2) for this site.
+export const PHOTOS = {
+  hero: '/media/photos/hero.webp',
+  who: '/media/photos/who.webp',
+  pay: '/media/photos/pay.webp',
+}
+
 const img = (name) => `/media/steps/${name}.webp`
 
 // Reward rules. Change the numbers here and the whole page (hero, quest, calculator) updates.
