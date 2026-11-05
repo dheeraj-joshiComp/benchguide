@@ -58,22 +58,6 @@ export const BEFORE = [
   { icon: 'check', title: 'A real, finished task', text: 'No filler, no coding.' },
 ]
 
-export const PAYMENT = [
-  { value: '₹500', title: 'For every approved task', text: 'Each successful task you submit earns ₹500 once we approve it.' },
-  { value: '+₹50', title: 'Per bonus app you really used', text: 'Gmail, Sheets, Docs, Notion, Slack, Calendar or Instant Tools. Only counted on approved tasks, up to ₹200 per task.' },
-  { value: '+₹500', title: 'Bonus at 10 approved tasks', text: 'When 10 of your tasks are approved, you get an extra ₹500 on top, after we verify all 10.' },
-  { value: '2–3 days', title: 'Straight to your bank', text: 'After approval, the payment reaches your bank account in about 2–3 days.' },
-]
-
-export const PAYMENT_RULES = [
-  'Every task is reviewed manually by our team.',
-  'We pay only after we verify that the conversation is above 25,000 action tokens and the prompts are real and genuine.',
-  'Chats that are not in English, not finished, or padded to raise the token count are not paid.',
-  'App bonuses are paid only on approved tasks, and only for apps the AI actually used in that chat. Connecting an app without using it earns nothing.',
-]
-
-
-
 // Each bullet is either a string or an array of parts: strings, { strong } and { text, href } links.
 // Each step can show screenshots: { src, alt, caption }.
 export const STEPS = [

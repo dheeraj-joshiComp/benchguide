@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import {
-  LINKS, VIDEO, BEFORE, PAYMENT, PAYMENT_RULES,
+  LINKS, VIDEO, BEFORE, 
   STEPS, TOKENS, PROMPTS, REQUIREMENTS, IDEAS, REWARDS, BONUS_APPS, QUEST,
 } from './content'
 
@@ -63,13 +63,13 @@ function Nav() {
   return (
     <nav>
       <div className="bar">
-        <a className="brand" href="#top"><span className="logo"><Icon name="zap" size={14} /></span>BenchChat study</a>
+        <a className="brand" href="#top"><span className="logo"><Icon name="zap" size={13} /></span>BenchChat <span className="brand-sub">Study</span></a>
         <div className="links">
           <a href="#quest">How it works</a>
           <a href="#payment">Rewards</a>
           <a href="#guide">Guide</a>
         </div>
-        <Button href={LINKS.form} primary>Submit task</Button>
+        <a className="btn primary small" href="#quest">Start earning</a>
       </div>
     </nav>
   )
@@ -136,39 +136,28 @@ function Demo() {
   )
 }
 
-const MARQUEE = ['Gmail', 'Google Sheets', 'Google Docs', 'Notion', 'Slack', 'Google Calendar', 'Google Drive', 'Web search', 'Firecrawl', 'Exa', 'People Data Labs', 'ElevenLabs']
-
 function Hero() {
   return (
     <header className="hero" id="top">
       <div className="wrap hero-grid">
         <div className="hero-copy">
-          <span className="pill"><span className="live" />Paid study · open now</span>
-          <h1>Earn up to <mark>₹{REWARDS.maxPerTask}</mark> for one real task with AI</h1>
-          <p className="lede">Use apps you already have. Finish the task. Get paid.</p>
+          <p className="eyebrow">Paid research study</p>
+          <h1>Get paid to use AI on your real work</h1>
+          <p className="lede">
+            Do one real task with BenchChat, an AI assistant that works inside Gmail, Sheets, Docs and Notion.
+            Earn ₹{REWARDS.base} for each approved task, plus bonuses.
+          </p>
           <div className="cta">
-            <a className="btn primary" href="#quest">Get started <Icon name="arrow" size={16} /></a>
-            <a className="btn hide-phone" href="#video">Watch 1-min video</a>
+            <a className="btn primary" href="#quest">Start earning</a>
+            <a className="text-link" href="#payment">See how pay works <Icon name="arrow" size={15} /></a>
           </div>
-          <div className="trust">
-            <span>Free to join</span>
-            <span>Never asks for money</span>
-            <span>Paid in 2–3 days</span>
-          </div>
+          <dl className="facts">
+            <div><dt>₹{REWARDS.base}</dt><dd>per approved task</dd></div>
+            <div><dt>2–3 days</dt><dd>to your bank or UPI</dd></div>
+            <div><dt>Free</dt><dd>no fees, ever</dd></div>
+          </dl>
         </div>
-        <Demo />
-      </div>
-      <div className="wrap">
-        <div className="ladder" aria-label="Rewards">
-          <div className="rung"><small>Small wins</small><b>+₹{REWARDS.perApp}</b><span>each app you use</span></div>
-          <div className="rung big"><small>Main reward</small><b>₹{REWARDS.base}</b><span>task done, 25k+ tokens</span></div>
-          <div className="rung"><small>Big bonus</small><b>+₹{REWARDS.streak}</b><span>at {REWARDS.streakAt} approved tasks</span></div>
-        </div>
-      </div>
-      <div className="marquee" aria-label="Works with">
-        <div className="track">
-          {[...MARQUEE, ...MARQUEE].map((m, i) => <span key={i}>{m}</span>)}
-        </div>
+        <div className="stage"><Demo /></div>
       </div>
     </header>
   )
@@ -287,20 +276,24 @@ function Before() {
 }
 
 function Payment() {
+  const rows = [
+    { amount: `₹${REWARDS.base}`, title: 'Each approved task', when: 'Task finished, in English, over 25,000 action tokens' },
+    { amount: `+₹${REWARDS.perApp}`, title: 'Each app the AI used', when: `Gmail, Sheets, Docs, Notion, Slack, Calendar or Instant Tools · up to ₹${REWARDS.appCap} per task` },
+    { amount: `+₹${REWARDS.streak}`, title: `Bonus at ${REWARDS.streakAt} approved tasks`, when: 'Paid once all ten are verified' },
+  ]
   return (
     <section id="payment">
       <div className="wrap">
-        <SectionHead label="Rewards" title="How you get paid" />
-        <div className="grid g4">
-          {PAYMENT.map((p) => (
-            <div className="panel" key={p.title}>
-              <b className="figure">{p.value}</b>
-              <h3>{p.title}</h3>
-              <p>{p.text}</p>
+        <SectionHead label="Pay" title="What you earn">Up to ₹{REWARDS.maxPerTask} for a single task. Paid to your bank or UPI in about 2–3 days after approval.</SectionHead>
+        <div className="pay">
+          {rows.map((r) => (
+            <div className="pay-row" key={r.title}>
+              <b>{r.amount}</b>
+              <div><h3>{r.title}</h3><p>{r.when}</p></div>
             </div>
           ))}
         </div>
-        <ul className="list">{PAYMENT_RULES.map((r) => <li key={r}>{r}</li>)}</ul>
+        <p className="fine">Every task is reviewed by a person. Unfinished, non-English or padded chats are not paid, and app bonuses only count on approved tasks.</p>
       </div>
     </section>
   )
@@ -308,6 +301,7 @@ function Payment() {
 
 // Phones skip the video entirely (not rendered, so nothing downloads).
 const PHONE = '(max-width: 640px)'
+
 function useIsPhone() {
   const [phone, setPhone] = useState(() => window.matchMedia?.(PHONE).matches ?? false)
   useEffect(() => {
@@ -526,8 +520,8 @@ export default function App() {
       <SubmitBand />
       <footer>
         <div className="wrap">
-          <span className="label">BenchChat study</span>
-          <span className="label">Every task is reviewed manually</span>
+          <span>BenchChat Study</span>
+          <span><a href={LINKS.form} {...ext}>Submit a task</a> · Every task is reviewed by a person</span>
         </div>
       </footer>
       <Lightbox media={open} onClose={() => setOpen(null)} />
