@@ -280,3 +280,18 @@ footer a { color: var(--fg-70); }
 .toast b { display: block; font-size: 15px; }
 .toast span { display: block; color: var(--fg-50); font-size: 13px; }
 .hero-media .photo img { object-position: 40% 50%; }
+
+/* brand logos (Simple Icons masks) and the apps row */
+.logo-mark { display: inline-block; flex-shrink: 0; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-size: contain; mask-size: contain; -webkit-mask-position: center; mask-position: center; }
+.dapp, .app { align-items: center; }
+.dapp:not(.on) .logo-mark { opacity: .45; filter: grayscale(1); }
+.photo video { display: block; width: 100%; height: 100%; object-fit: cover; }
+.works { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 32px; margin-top: 40px; padding: 22px 28px; border-radius: 18px; background: var(--bg-soft); }
+.works > span { color: var(--fg-50); font-size: 15px; }
+.works-row { display: flex; flex-wrap: wrap; gap: 12px 28px; }
+.works-app { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 500; }
+@media (max-width: 640px) {
+  .works { padding: 18px; margin-top: 24px; }
+  .works-row { gap: 12px 18px; }
+  .works-app { font-size: 14px; }
+}

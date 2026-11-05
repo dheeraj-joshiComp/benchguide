@@ -13,6 +13,7 @@ export const VIDEO = {
 
 // Photos generated with Higgsfield (Soul V2) for this site.
 export const PHOTOS = {
+  heroVideo: '/media/photos/hero.mp4',
   hero: '/media/photos/hero.webp',
   who: '/media/photos/who.webp',
   pay: '/media/photos/pay.webp',
@@ -32,13 +33,14 @@ REWARDS.maxPerTask = REWARDS.base + REWARDS.appCap
 
 // Bonus apps. Each pays REWARDS.perApp only if the app was connected AND the AI really used it
 // in the same approved chat (read from it or wrote to it as part of the task).
+// Logos are Simple Icons (simple-icons@13.21.0) brand marks, tinted with each brand colour.
 export const BONUS_APPS = [
-  { id: 'gmail', name: 'Gmail', use: 'read or draft emails' },
-  { id: 'sheets', name: 'Google Sheets', use: 'build or update a sheet' },
-  { id: 'docs', name: 'Google Docs', use: 'write a doc' },
-  { id: 'notion', name: 'Notion', use: 'write a page' },
-  { id: 'slack', name: 'Slack', use: 'read or draft messages' },
-  { id: 'calendar', name: 'Google Calendar', use: 'check or plan events' },
+  { id: 'gmail', name: 'Gmail', use: 'read or draft emails', logo: 'gmail', color: '#EA4335' },
+  { id: 'sheets', name: 'Google Sheets', use: 'build or update a sheet', logo: 'googlesheets', color: '#34A853' },
+  { id: 'docs', name: 'Google Docs', use: 'write a doc', logo: 'googledocs', color: '#4285F4' },
+  { id: 'notion', name: 'Notion', use: 'write a page', logo: 'notion', color: '#111111' },
+  { id: 'slack', name: 'Slack', use: 'read or draft messages', logo: 'slack', color: '#4A154B' },
+  { id: 'calendar', name: 'Google Calendar', use: 'check or plan events', logo: 'googlecalendar', color: '#4285F4' },
   { id: 'instant', name: 'Instant Tools', use: 'web search, scraping, enrichment' },
 ]
 

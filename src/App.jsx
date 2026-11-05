@@ -30,6 +30,12 @@ function Icon({ name, size = 14 }) {
   )
 }
 
+function Logo({ app, size = 16 }) {
+  if (!app?.logo) return null
+  const url = `url(/media/logos/${app.logo}.svg)`
+  return <span className="logo-mark" aria-hidden="true" style={{ width: size, height: size, background: app.color, WebkitMaskImage: url, maskImage: url }} />
+}
+
 function Rich({ value }) {
   if (typeof value === 'string') return value
   return value.map((part, i) => {
@@ -86,7 +92,7 @@ function useStored(key, initial) {
   return [value, setValue]
 }
 
-const DEMO_APPS = ['Gmail', 'Sheets', 'Docs', 'Notion']
+const DEMO_APPS = ['gmail', 'sheets', 'docs', 'notion'].map((id) => BONUS_APPS.find((a) => a.id === id))
 const DEMO_LEN = 7000 // ms per loop
 
 // Looping mock of a BenchChat session: tokens climb, apps light up, payout grows.
@@ -123,7 +129,7 @@ function Demo() {
         <div className="demo-meter"><span style={{ width: `${Math.min(tokens / 250, 100)}%` }} /><em>25k</em></div>
         <div className="demo-apps">
           {DEMO_APPS.map((a, i) => (
-            <span key={a} className={i < lit ? 'dapp on' : 'dapp'}>{a}{i < lit && <b>+₹{REWARDS.perApp}</b>}</span>
+            <span key={a.id} className={i < lit ? 'dapp on' : 'dapp'}><Logo app={a} size={13} />{a.name.replace('Google ', '')}{i < lit && <b>+₹{REWARDS.perApp}</b>}</span>
           ))}
         </div>
       </div>
@@ -157,9 +163,10 @@ function Hero() {
           </div>
         </div>
         <div className="hero-media">
-          <div className="photo"><img src={PHOTOS.hero} alt="A woman working on her laptop at home" width="1440" height="1080" /></div>
+          <HeroMedia />
           <div className="stage"><Demo /></div>
         </div>
+        <Works />
         <dl className="facts">
           <div><dt>₹{REWARDS.base}</dt><dd>per approved task</dd></div>
           <div><dt>+₹{REWARDS.perApp}</dt><dd>for each app you use</dd></div>
@@ -168,6 +175,31 @@ function Hero() {
         </dl>
       </div>
     </header>
+  )
+}
+
+function HeroMedia() {
+  const phone = useIsPhone()
+  const still = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+  return (
+    <div className="photo">
+      {phone || still
+        ? <img src={PHOTOS.hero} alt="A woman working on her laptop at home" width="1600" height="1200" />
+        : <video src={PHOTOS.heroVideo} poster={PHOTOS.hero} autoPlay muted loop playsInline aria-label="A woman working on her laptop at home" />}
+    </div>
+  )
+}
+
+function Works() {
+  return (
+    <div className="works">
+      <span>Works with the apps you already use</span>
+      <div className="works-row">
+        {BONUS_APPS.filter((a) => a.logo).map((a) => (
+          <span key={a.id} className="works-app"><Logo app={a} size={20} />{a.name}</span>
+        ))}
+      </div>
+    </div>
   )
 }
 
@@ -232,7 +264,7 @@ function Quest({ onOpen }) {
                       {BONUS_APPS.map((a) => (
                         <button type="button" key={a.id} className={apps.includes(a.id) ? 'app on' : 'app'}
                           onClick={() => toggle(setApps, a.id)} aria-pressed={apps.includes(a.id)} title={a.use}>
-                          {a.name} <em>+₹{REWARDS.perApp}</em>
+                          <Logo app={a} size={15} />{a.name} <em>+₹{REWARDS.perApp}</em>
                         </button>
                       ))}
                     </div>
