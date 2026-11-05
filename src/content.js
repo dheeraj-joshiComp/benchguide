@@ -11,45 +11,61 @@ export const VIDEO = {
   poster: '/media/bench-howto-poster.jpg',
 }
 
+// Photos generated with Higgsfield (Soul V2) for this site.
+export const PHOTOS = {
+  heroVideo: '/media/photos/hero.mp4',
+  hero: '/media/photos/hero.webp',
+  who: '/media/photos/who.webp',
+  pay: '/media/photos/pay.webp',
+}
+
 const img = (name) => `/media/steps/${name}.webp`
+
+// Reward rules. Change the numbers here and the whole page (hero, quest, calculator) updates.
+export const REWARDS = {
+  base: 500, // per approved task, needs 25,000+ action tokens
+  perApp: 50, // per bonus app that was actually used in the approved chat
+  appCap: 200, // most app bonus one task can earn
+  streakAt: 10, // approved tasks needed for the streak bonus
+  streak: 500,
+}
+REWARDS.maxPerTask = REWARDS.base + REWARDS.appCap
+
+// Bonus apps. Each pays REWARDS.perApp only if the app was connected AND the AI really used it
+// in the same approved chat (read from it or wrote to it as part of the task).
+// Logos are Simple Icons (simple-icons@13.21.0) brand marks, tinted with each brand colour.
+export const BONUS_APPS = [
+  { id: 'gmail', name: 'Gmail', use: 'read or draft emails', logo: 'gmail', color: '#EA4335' },
+  { id: 'sheets', name: 'Google Sheets', use: 'build or update a sheet', logo: 'googlesheets', color: '#34A853' },
+  { id: 'docs', name: 'Google Docs', use: 'write a doc', logo: 'googledocs', color: '#4285F4' },
+  { id: 'notion', name: 'Notion', use: 'write a page', logo: 'notion', color: '#111111' },
+  { id: 'slack', name: 'Slack', use: 'read or draft messages', logo: 'slack', color: '#4A154B' },
+  { id: 'calendar', name: 'Google Calendar', use: 'check or plan events', logo: 'googlecalendar', color: '#4285F4' },
+  { id: 'instant', name: 'Instant Tools', use: 'web search, scraping, enrichment' },
+]
+
+// The quest: short levels shown right under the hero. `reward` is what the level unlocks.
+export const QUEST = [
+  { id: 'signup', img: img('sign-up'), title: 'Sign up on BenchChat', hint: 'Continue with Google takes 30 seconds.', href: LINKS.bench, cta: 'Open BenchChat' },
+  { id: 'connect', img: img('dashboard-apps-instant'), title: 'Connect your apps', hint: 'Switch → For You → Connect. Each app you really use pays a bonus.', reward: `+₹${REWARDS.perApp} each` },
+  { id: 'task', img: img('type-task'), title: 'Give it one real task in English', hint: 'Several steps, several apps. Copy a prompt below if you need one.', href: '#prompts', cta: 'See prompts', external: false },
+  { id: 'tokens', img: img('multi-turn-tokens'), title: 'Keep going past 25,000 action tokens', hint: 'Counter is at the top right. Ask for fixes, more detail, a second draft.', reward: `₹${REWARDS.base}` },
+  { id: 'submit', title: 'Submit your chat link', hint: 'Only after the task is complete.', href: LINKS.form, cta: 'Open form' },
+]
 
 // Shown in the sticky strip under the nav, styled like BenchChat's own stats strip.
 export const STRIP = [
   { icon: 'zap', label: 'Action tokens', value: 'over 25,000' },
   { icon: 'globe', label: 'Language', value: 'English only' },
   { icon: 'check', label: 'Task', value: 'real and complete' },
-  { icon: 'wallet', label: 'Pay', value: '₹500 per approved task' },
-]
-
-// Cards under the hero, styled like BenchChat's suggested tasks. Each jumps to a section.
-export const HERO_CARDS = [
-  { title: '₹500 for every approved task, plus a ₹500 bonus at 10', label: 'Payment', href: '#payment' },
-  { title: 'Your chat must go above 25,000 action tokens', label: 'Action tokens', href: '#tokens' },
-  { title: 'Watch the whole flow in one minute', label: 'Video', href: '#video' },
-  { title: 'Copy a ready prompt and make it your own', label: 'Prompts', href: '#prompts' },
+  { icon: 'wallet', label: 'Pay', value: 'up to ₹700 per task' },
 ]
 
 export const BEFORE = [
-  { tag: 'Required', title: 'Over 25,000 action tokens', text: 'Your conversation must go above 25,000 action tokens. Under 25,000 is not approved and not paid, even if the task is good.' },
-  { tag: 'Required', title: 'Everything in English', text: 'Your task, every message you send and the final result must all be in English. Non-English chats are not approved.' },
-  { tag: 'Required', title: 'A real, genuine task', text: 'Use a real task from your work or daily life and stay with it until it is complete. Fake, repeated or filler prompts are rejected.' },
+  { icon: 'zap', title: '25,000+ action tokens', text: 'Under 25,000 is not paid.' },
+  { icon: 'globe', title: 'English only', text: 'Every message and the result.' },
+  { icon: 'check', title: 'A real, finished task', text: 'No filler, no coding.' },
 ]
-
-export const PAYMENT = [
-  { value: '₹500', title: 'For every approved task', text: 'Each successful task you submit earns ₹500 once we approve it.' },
-  { value: '+₹500', title: 'Bonus at 10 approved tasks', text: 'When 10 of your tasks are approved, you get an extra ₹500 on top, after we verify all 10.' },
-  { value: '2–3 days', title: 'Straight to your bank', text: 'After approval, the payment reaches your bank account in about 2–3 days.' },
-]
-
-export const PAYMENT_RULES = [
-  'Every task is reviewed manually by our team.',
-  'We pay only after we verify that the conversation is above 25,000 action tokens and the prompts are real and genuine.',
-  'Chats that are not in English, not finished, or padded to raise the token count are not paid.',
-]
-
-export const APPS = ['Google Sheets', 'Google Docs', 'Notion', 'Gmail', 'Google Drive', 'Google Calendar', 'Slack']
-
-export const INSTANT_APPS = ['SerpApi', 'Firecrawl', 'Tavily', 'Exa', 'ElevenLabs', 'People Data Labs', '+ many more']
 
 // Each bullet is either a string or an array of parts: strings, { strong } and { text, href } links.
 // Each step can show screenshots: { src, alt, caption }.

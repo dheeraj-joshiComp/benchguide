@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import {
-  LINKS, VIDEO, STRIP, HERO_CARDS, BEFORE, PAYMENT, PAYMENT_RULES, APPS, INSTANT_APPS,
-  STEPS, TOKENS, PROMPTS, REQUIREMENTS, IDEAS,
+  LINKS, VIDEO, BEFORE, 
+  STEPS, TOKENS, PHOTOS, PROMPTS, REQUIREMENTS, IDEAS, REWARDS, BONUS_APPS, QUEST,
 } from './content'
 
 const ext = { target: '_blank', rel: 'noopener noreferrer' }
@@ -15,6 +15,10 @@ const ICONS = {
   check: 'M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4 12 14.01l-3-3',
   wallet: 'M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4',
   arrow: 'M5 12h14M12 5l7 7-7 7',
+  chevron: 'M9 6l6 6-6 6',
+  image: 'M3 5h18v14H3zM3 16l5-5 4 4 3-3 6 6M15.5 9.5h.01',
+  copy: 'M9 9h11v11H9zM5 15H4V4h11v1',
+  bulb: 'M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3',
 }
 
 function Icon({ name, size = 14 }) {
@@ -24,6 +28,12 @@ function Icon({ name, size = 14 }) {
       <path d={ICONS[name]} />
     </svg>
   )
+}
+
+function Logo({ app, size = 16 }) {
+  if (!app?.logo) return null
+  const url = `url(/media/logos/${app.logo}.svg)`
+  return <span className="logo-mark" aria-hidden="true" style={{ width: size, height: size, background: app.color, WebkitMaskImage: url, maskImage: url }} />
 }
 
 function Rich({ value }) {
@@ -59,54 +69,265 @@ function Nav() {
   return (
     <nav>
       <div className="bar">
-        <a className="brand" href="#top">BenchChat <Badge kind="green">Study</Badge></a>
+        <a className="brand" href="#top"><span className="logo"><Icon name="zap" size={13} /></span>BenchChat <span className="brand-sub">Study</span></a>
         <div className="links">
-          <a href="#payment">Payment</a>
-          <a href="#video">Video</a>
-          <a href="#steps">Steps</a>
-          <a href="#tokens">Tokens</a>
-          <a href="#prompts">Prompts</a>
-          <a href="#requirements">Rules</a>
+          <a href="#quest">How it works</a>
+          <a href="#payment">Rewards</a>
+          <a href="#guide">Guide</a>
         </div>
-        <Button href={LINKS.form} primary>Submit</Button>
-      </div>
-      <div className="strip">
-        {STRIP.map((s) => (
-          <span className="stat" key={s.label}>
-            <Icon name={s.icon} />
-            <span className="k">{s.label}</span>
-            <span className="v">{s.value}</span>
-          </span>
-        ))}
+        <a className="btn small hide-phone" href={LINKS.form} target="_blank" rel="noopener noreferrer">Submit task</a>
+        <a className="btn primary small" href="#quest">Get started</a>
       </div>
     </nav>
   )
 }
 
-function Hero() {
+// Per-viewer progress only (which levels and apps they ticked). Never the source of truth for pay.
+function useStored(key, initial) {
+  const [value, setValue] = useState(() => {
+    try { return JSON.parse(localStorage.getItem(key)) ?? initial } catch { return initial }
+  })
+  useEffect(() => {
+    try { localStorage.setItem(key, JSON.stringify(value)) } catch { /* storage blocked */ }
+  }, [key, value])
+  return [value, setValue]
+}
+
+const DEMO_APPS = ['gmail', 'sheets', 'docs', 'notion'].map((id) => BONUS_APPS.find((a) => a.id === id))
+const DEMO_LEN = 7000 // ms per loop
+
+// Looping mock of a BenchChat session: tokens climb, apps light up, payout grows.
+function Demo() {
+  const [t, setT] = useState(0)
+  useEffect(() => {
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) { setT(DEMO_LEN); return }
+    const start = performance.now()
+    let raf
+    const tick = (now) => { setT((now - start) % (DEMO_LEN + 1500)); raf = requestAnimationFrame(tick) }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [])
+  const p = Math.min(t / DEMO_LEN, 1)
+  const tokens = Math.round(25400 * (1 - (1 - p) ** 2))
+  const lit = Math.min(DEMO_APPS.length, Math.floor(p * (DEMO_APPS.length + 1)))
+  const earned = (tokens >= 25000 ? REWARDS.base : 0) + Math.min(lit * REWARDS.perApp, REWARDS.appCap)
+  const approved = p >= 1
   return (
-    <header className="hero" id="top">
-      <div className="wash" aria-hidden="true" />
-      <div className="wrap hero-inner">
-        <h1>Do one real task with an AI assistant, start to finish</h1>
-        <p className="lede">
-          Give BenchChat a real, multi-step task from your work or daily life, in English. Work with it over many messages
-          until it's done and the chat is <Strong>above 25,000 action tokens</Strong>. Every approved task pays ₹500.
-        </p>
-        <div className="cta">
-          <Button href={LINKS.bench} primary>Open BenchChat</Button>
-          <a className="btn" href="#steps">Read the steps</a>
+    <div className="demo" aria-hidden="true">
+      <div className="demo-bar">
+        <span className="dots"><i /><i /><i /></span>
+        <span className="demo-title">BenchChat</span>
+        <span className={tokens >= 25000 ? 'demo-tokens hit' : 'demo-tokens'}>
+          <Icon name="zap" size={12} />{tokens.toLocaleString('en-IN')} action tokens
+        </span>
+      </div>
+      <div className="demo-body">
+        <div className="msg you">Find 25 remote analyst jobs, rank them in a Sheet and draft cover letters in Docs.</div>
+        <div className={p > .15 ? 'msg ai show' : 'msg ai'}>
+          <span className="typing"><i /><i /><i /></span> Researching 3 sources, building your sheet…
         </div>
-        <div className="cards">
-          {HERO_CARDS.map((c) => (
-            <a className="card" href={c.href} key={c.label}>
-              <span>{c.title}</span>
-              <span className="card-foot"><span className="label">{c.label}</span><Icon name="arrow" size={16} /></span>
-            </a>
+        <div className={p > .55 ? 'msg you show' : 'msg you'}>Add 10 more and write a second draft for #2.</div>
+        <div className="demo-meter"><span style={{ width: `${Math.min(tokens / 250, 100)}%` }} /><em>25k</em></div>
+        <div className="demo-apps">
+          {DEMO_APPS.map((a, i) => (
+            <span key={a.id} className={i < lit ? 'dapp on' : 'dapp'}><Logo app={a} size={13} />{a.name.replace('Google ', '')}{i < lit && <b>+₹{REWARDS.perApp}</b>}</span>
           ))}
         </div>
       </div>
+      <div className="demo-foot">
+        <span>Your payout</span>
+        <b>₹{earned}</b>
+        {approved && <span className="stamp">Approved ✓</span>}
+      </div>
+    </div>
+  )
+}
+
+// Scale-style hero: an inset dark panel with the Higgsfield video behind a centred headline.
+function Hero() {
+  return (
+    <header className="hero" id="top">
+      <div className="hero-panel">
+        <HeroMedia />
+        <div className="hero-shade" aria-hidden="true" />
+        <div className="hero-content">
+          <p className="eyebrow">Paid research study</p>
+          <h1>Get paid to use AI on your real work</h1>
+          <p className="lede">Do one real task with an AI assistant in your own apps. Earn ₹{REWARDS.base} for each approved task, plus bonuses.</p>
+          <div className="cta">
+            <a className="btn light" href="#quest">Start earning</a>
+            <a className="btn outline-light" href="#payment">See how pay works</a>
+          </div>
+        </div>
+        <a className="scroll-hint" href="#statement">Scroll to explore <span><Icon name="arrow" size={14} /></span></a>
+      </div>
     </header>
+  )
+}
+
+// Dark statement block, like Scale's "90% of model builders…" band, with the payout demo.
+function Statement() {
+  return (
+    <section id="statement" className="dark">
+      <div className="wrap statement">
+        <div className="stage"><Demo /></div>
+        <div>
+          <p className="big-quote">Work with the AI until the task is done. Cross 25,000 action tokens. <span>Get ₹{REWARDS.base}, plus ₹{REWARDS.perApp} for every app it used.</span></p>
+          <dl className="facts">
+            <div><dt>₹{REWARDS.base}</dt><dd>per approved task</dd></div>
+            <div><dt>2–3 days</dt><dd>to your bank or UPI</dd></div>
+            <div><dt>Free</dt><dd>no fees, ever</dd></div>
+          </dl>
+        </div>
+      </div>
+      <div className="wrap"><Works /></div>
+    </section>
+  )
+}
+
+// React does not write `muted` as an attribute, which some browsers need before they allow autoplay.
+const autoplay = (v) => {
+  if (!v) return
+  v.muted = true
+  v.play?.().catch(() => {})
+}
+
+function HeroMedia() {
+  const phone = useIsPhone()
+  const still = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+  return (
+    <div className="hero-media">
+      {phone || still
+        ? <img src={PHOTOS.hero} alt="A woman working on her laptop at home" width="1600" height="1200" />
+        : <video ref={autoplay} src={PHOTOS.heroVideo} poster={PHOTOS.hero} autoPlay muted loop playsInline aria-label="A woman working on her laptop at home" />}
+    </div>
+  )
+}
+
+function Works() {
+  return (
+    <div className="works">
+      <span>Works with the apps you already use</span>
+      <div className="works-row">
+        {BONUS_APPS.filter((a) => a.logo).map((a) => (
+          <span key={a.id} className="works-app"><Logo app={a} size={20} />{a.name}</span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function Who() {
+  const points = [
+    { title: 'Use your own apps', text: 'Gmail, Google Sheets, Docs, Notion, Slack. Whatever you already work in.' },
+    { title: 'Bring a real task', text: 'Something you would do anyway: research, a report, a tracker, a plan.' },
+    { title: 'About 30–45 minutes', text: 'From home, on a laptop. No coding and no experience with AI needed.' },
+  ]
+  return (
+    <section id="who">
+      <div className="wrap split">
+        <div className="photo tall"><img src={PHOTOS.who} alt="A man working on a laptop in a cafe" loading="lazy" width="900" height="1200" /></div>
+        <div>
+          <SectionHead label="Who it's for" title="Students, freelancers and professionals" />
+          <div className="points">
+            {points.map((p) => <div key={p.title}><h3>{p.title}</h3><p>{p.text}</p></div>)}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Quest({ onOpen }) {
+  const [done, setDone] = useStored('quest-done', [])
+  const [apps, setApps] = useStored('quest-apps', [])
+  const toggle = (set, id) => set((list) => (list.includes(id) ? list.filter((x) => x !== id) : [...list, id]))
+  const appBonus = Math.min(apps.length * REWARDS.perApp, REWARDS.appCap)
+  const total = REWARDS.base + appBonus
+  const progress = Math.round((done.length / QUEST.length) * 100)
+  return (
+    <section id="quest">
+      <div className="wrap">
+        <SectionHead label="How it works" title="5 steps to get paid">
+          Tick each step as you go.
+        </SectionHead>
+        <div className="meter" role="progressbar" aria-valuenow={progress} aria-valuemin="0" aria-valuemax="100">
+          <span style={{ width: `${progress}%` }} />
+        </div>
+        <span className="label block meter-label">{done.length} of {QUEST.length} done</span>
+        <ol className="quest">
+          {QUEST.map((q, i) => {
+            const isDone = done.includes(q.id)
+            return (
+              <li key={q.id} className={isDone ? 'level done' : 'level'}>
+                <button type="button" className="tick" onClick={() => toggle(setDone, q.id)}
+                  aria-pressed={isDone} aria-label={`Mark level ${i + 1} done`}>
+                  {isDone ? <Icon name="check" size={16} /> : pad(i + 1)}
+                </button>
+                <div className="level-body">
+                  <h3>{q.title}</h3>
+                  <p>{q.hint}</p>
+                  {q.img && (
+                    <button type="button" className="thumb" onClick={() => onOpen({ src: q.img, alt: q.title, caption: q.title })}
+                      aria-label={`Enlarge screenshot: ${q.title}`}>
+                      <img src={q.img} alt="" loading="lazy" width="1800" height="1130" />
+                    </button>
+                  )}
+                  {q.id === 'connect' && (
+                    <div className="apps">
+                      {BONUS_APPS.map((a) => (
+                        <button type="button" key={a.id} className={apps.includes(a.id) ? 'app on' : 'app'}
+                          onClick={() => toggle(setApps, a.id)} aria-pressed={apps.includes(a.id)} title={a.use}>
+                          <Logo app={a} size={15} />{a.name} <em>+₹{REWARDS.perApp}</em>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <div className="level-side">
+                  {q.reward && <span className="reward">{q.reward}</span>}
+                  {q.href && (q.external === false
+                    ? <a className="btn ghost" href={q.href}>{q.cta}</a>
+                    : <Button href={q.href}>{q.cta}</Button>)}
+                </div>
+              </li>
+            )
+          })}
+        </ol>
+        <div className="total">
+          <div>
+            <span className="label">Your payout if approved</span>
+            <b>₹{total}</b>
+            <span className="sub">₹{REWARDS.base} base + ₹{appBonus} app bonus{apps.length * REWARDS.perApp > REWARDS.appCap ? ` (capped at ₹${REWARDS.appCap})` : ''}</span>
+          </div>
+          <p className="note">App bonus counts only for apps the AI <Strong>actually used</Strong> in your approved chat. Connecting alone earns nothing. Under 25,000 action tokens, nothing is paid.</p>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Fold({ id, icon, title, children }) {
+  return (
+    <details className="fold" id={id}>
+      <summary><Icon name="chevron" size={16} /><Icon name={icon} size={16} />{title}</summary>
+      <div className="fold-body">{children}</div>
+    </details>
+  )
+}
+
+function Guide({ onOpen }) {
+  return (
+    <section id="guide">
+      <div className="wrap">
+        <SectionHead label="Guide" title="Need help?">Open only what you need.</SectionHead>
+        <Fold id="steps" icon="image" title="Step-by-step with screenshots"><Steps onOpen={onOpen} /></Fold>
+        <Fold id="tokens" icon="zap" title="How to reach 25,000 action tokens"><Tokens /></Fold>
+        <Fold id="prompts" icon="copy" title="Ready prompts to copy"><Prompts /></Fold>
+        <Fold id="requirements" icon="check" title="Full approval rules"><Requirements /></Fold>
+        <Fold id="ideas" icon="bulb" title="More task ideas"><Ideas /></Fold>
+      </div>
+    </section>
   )
 }
 
@@ -114,11 +335,11 @@ function Before() {
   return (
     <section id="start">
       <div className="wrap">
-        <SectionHead label="Before you start" title="Three rules for every task" />
+        <SectionHead label="Rules" title="Three things we check" />
         <div className="grid g3">
           {BEFORE.map((b) => (
-            <div className="panel" key={b.title}>
-              <Badge kind="amber">{b.tag}</Badge>
+            <div className="panel rule" key={b.title}>
+              <span className="rule-icon"><Icon name={b.icon} size={20} /></span>
               <h3>{b.title}</h3>
               <p>{b.text}</p>
             </div>
@@ -129,58 +350,62 @@ function Before() {
   )
 }
 
-function About() {
-  return (
-    <section>
-      <div className="wrap about">
-        <div>
-          <SectionHead label="About" title="What this study is about" />
-          <p>
-            <a href={LINKS.bench} {...ext}>BenchChat</a> is an AI assistant that does real work inside your apps: it writes
-            documents, fills spreadsheets, drafts emails, checks your calendar and researches the web.
-          </p>
-          <p>
-            <Strong>Your job:</Strong> give it a realistic, complex task from your work or daily life, and work with it
-            over many messages until the task is fully done.
-          </p>
-        </div>
-        <div>
-          <span className="label block">Apps to connect — use these the most</span>
-          <div className="chips">{APPS.map((a) => <span className="chip" key={a}>{a}</span>)}</div>
-          <span className="label block spaced">Instant Tools — optional, 80+ apps, no account needed</span>
-          <div className="chips">{INSTANT_APPS.map((a) => <span className="chip" key={a}>{a}</span>)}</div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
 function Payment() {
+  const rows = [
+    { amount: `₹${REWARDS.base}`, title: 'Each approved task', when: 'Task finished, in English, over 25,000 action tokens' },
+    { amount: `+₹${REWARDS.perApp}`, title: 'Each app the AI used', when: `Gmail, Sheets, Docs, Notion, Slack, Calendar or Instant Tools · up to ₹${REWARDS.appCap} per task` },
+    { amount: `+₹${REWARDS.streak}`, title: `Bonus at ${REWARDS.streakAt} approved tasks`, when: 'Paid once all ten are verified' },
+  ]
   return (
     <section id="payment">
       <div className="wrap">
-        <SectionHead label="Payment" title="How you get paid" />
-        <div className="grid g3">
-          {PAYMENT.map((p) => (
-            <div className="panel" key={p.title}>
-              <b className="figure">{p.value}</b>
-              <h3>{p.title}</h3>
-              <p>{p.text}</p>
+        <SectionHead label="Pay" title="What you earn">Up to ₹{REWARDS.maxPerTask} for a single task. Paid to your bank or UPI in about 2–3 days after approval.</SectionHead>
+        <div className="pay-wrap">
+        <div className="pay">
+          {rows.map((r) => (
+            <div className="pay-row" key={r.title}>
+              <b>{r.amount}</b>
+              <div><h3>{r.title}</h3><p>{r.when}</p></div>
             </div>
           ))}
         </div>
-        <ul className="list">{PAYMENT_RULES.map((r) => <li key={r}>{r}</li>)}</ul>
+        <div className="photo">
+          <img src={PHOTOS.pay} alt="Checking a payment on a phone" loading="lazy" width="1400" height="1050" />
+          <div className="toast" aria-hidden="true">
+            <span className="toast-icon"><Icon name="check" size={16} /></span>
+            <div><b>₹{REWARDS.maxPerTask} received</b><span>BenchChat Study · task approved</span></div>
+          </div>
+        </div>
+        </div>
+        <p className="fine">Every task is reviewed by a person. Unfinished, non-English or padded chats are not paid, and app bonuses only count on approved tasks.</p>
       </div>
     </section>
   )
 }
 
+// Phones skip the video entirely (not rendered, so nothing downloads).
+const PHONE = '(max-width: 640px)'
+
+function useIsPhone() {
+  const [phone, setPhone] = useState(() => window.matchMedia?.(PHONE).matches ?? false)
+  useEffect(() => {
+    const mq = window.matchMedia?.(PHONE)
+    if (!mq) return
+    const on = (e) => setPhone(e.matches)
+    mq.addEventListener('change', on)
+    return () => mq.removeEventListener('change', on)
+  }, [])
+  return phone
+}
+
 function Video() {
+  const phone = useIsPhone()
+  if (phone) return null
   return (
     <section id="video">
       <div className="wrap">
-        <SectionHead label="Video" title="Watch the whole flow in one minute">
-          Sign up, connect an app, turn on Instant Tools and watch the action-token count grow. The steps below show each screen.
+        <SectionHead label="Video" title="See it in one minute">
+          Sign up, connect an app, and watch the token count grow.
         </SectionHead>
         <div className="frame">
           <video src={VIDEO.src} poster={VIDEO.poster} controls muted playsInline preload="metadata" />
@@ -204,11 +429,8 @@ function Figure({ media, onOpen }) {
 
 function Steps({ onOpen }) {
   return (
-    <section id="steps">
-      <div className="wrap">
-        <SectionHead label="Steps" title="How to do it, step by step">
-          The numbered boxes in each screenshot show exactly where to click.
-        </SectionHead>
+    <>
+        <p className="sub">The numbered boxes in each screenshot show exactly where to click.</p>
         <ol className="steps">
           {STEPS.map((s, i) => (
             <li className="step" key={s.title}>
@@ -229,18 +451,14 @@ function Steps({ onOpen }) {
             </li>
           ))}
         </ol>
-      </div>
-    </section>
+    </>
   )
 }
 
 function Tokens() {
   return (
-    <section id="tokens">
-      <div className="wrap">
-        <SectionHead label="Action tokens" title="How action tokens work">
-          Action tokens measure how much real work the AI does for you. Your chat must go above 25,000.
-        </SectionHead>
+    <>
+        <p className="sub">Action tokens measure how much real work the AI does for you. Your chat must go above 25,000.</p>
         <div className="grid g2">
           <div className="panel">
             <span className="label green">Counted</span>
@@ -255,8 +473,7 @@ function Tokens() {
         <h3 className="spaced">How to reach 25,000 with real work</h3>
         <ul className="list">{TOKENS.tips.map((t, i) => <li key={i}><Rich value={t} /></li>)}</ul>
         <p className="note amber">{TOKENS.warning}</p>
-      </div>
-    </section>
+    </>
   )
 }
 
@@ -276,12 +493,9 @@ function CopyButton({ text }) {
 
 function Prompts() {
   return (
-    <section id="prompts">
-      <div className="wrap">
-        <SectionHead label="Prompts" title="Example prompts">
-          Replace everything in [brackets] with your own real details. Each one writes a lot into Google Sheets, Google Docs
-          or Notion, which is what grows the action-token count. Instant Tools are optional but make these richer.
-        </SectionHead>
+    <>
+        <p className="sub">Replace everything in [brackets] with your own real details. Each one writes a lot into Google Sheets, Google Docs
+          or Notion, which is what grows the action-token count. Instant Tools are optional but make these richer.</p>
         <div className="prompts">
           {PROMPTS.map((p) => (
             <article className="prompt" key={p.tag}>
@@ -296,34 +510,27 @@ function Prompts() {
             </article>
           ))}
         </div>
-      </div>
-    </section>
+    </>
   )
 }
 
 function Requirements() {
   return (
-    <section id="requirements">
-      <div className="wrap">
-        <SectionHead label="Approval" title="Requirements for approval and payment">
-          Your task is approved and paid only if all of these are true.
-        </SectionHead>
+    <>
+        <p className="sub">Your task is approved and paid only if all of these are true.</p>
         <ol className="rows">
           {REQUIREMENTS.map((r, i) => (
             <li key={i}><span className="label">{pad(i + 1)}</span><div><Rich value={r} /></div></li>
           ))}
         </ol>
-      </div>
-    </section>
+    </>
   )
 }
 
 function Ideas() {
   return (
-    <section id="ideas">
-      <div className="wrap">
-        <SectionHead label="Ideas" title="More task ideas" />
-        <div className="cards three">
+    <>
+                <div className="cards three">
           {IDEAS.map((idea) => (
             <div className="card static" key={idea.tag}>
               <span>{idea.text}</span>
@@ -332,8 +539,7 @@ function Ideas() {
           ))}
         </div>
         <p className="sub spaced">Or anything else from your own daily work. <a href={LINKS.moreIdeas} {...ext}>More ideas</a></p>
-      </div>
-    </section>
+    </>
   )
 }
 
@@ -359,7 +565,7 @@ function SubmitBand() {
             <Button href={LINKS.form} primary>Open the submission form</Button>
             <p className="sub spaced">
               You'll be asked for your name, email, phone number, UPI ID, conversation URL, token count and a short summary.
-              We review every task manually. Approved tasks are paid ₹500 to your bank in about 2–3 days.
+              We review every task manually. Approved tasks are paid ₹500 plus any app bonus to your bank in about 2–3 days. In the summary, list the apps the AI used.
             </p>
           </div>
         </div>
@@ -390,20 +596,18 @@ export default function App() {
     <>
       <Nav />
       <Hero />
-      <Before />
-      <About />
+      <Statement />
+      <Who />
+      <Quest onOpen={setOpen} />
       <Payment />
+      <Before />
       <Video />
-      <Steps onOpen={setOpen} />
-      <Tokens />
-      <Prompts />
-      <Requirements />
-      <Ideas />
+      <Guide onOpen={setOpen} />
       <SubmitBand />
       <footer>
         <div className="wrap">
-          <span className="label">BenchChat study</span>
-          <span className="label">Every task is reviewed manually</span>
+          <span>BenchChat Study</span>
+          <span><a href={LINKS.form} {...ext}>Submit a task</a> · Every task is reviewed by a person</span>
         </div>
       </footer>
       <Lightbox media={open} onClose={() => setOpen(null)} />
