@@ -111,6 +111,12 @@ function Hero() {
           <a className="btn primary" href="#quest">Start the quest</a>
           <a className="btn" href="#video">Watch 1-min video</a>
         </div>
+        <div className="trust">
+          <span>Free to join</span>
+          <span>We never ask for money or passwords</span>
+          <span>Every task reviewed by a person</span>
+          <span>Paid by UPI or bank in 2–3 days</span>
+        </div>
       </div>
     </header>
   )
