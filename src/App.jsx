@@ -148,7 +148,7 @@ function Hero() {
           <p className="lede">Use apps you already have. Finish the task. Get paid.</p>
           <div className="cta">
             <a className="btn primary" href="#quest">Get started <Icon name="arrow" size={16} /></a>
-            <a className="btn" href="#video">Watch 1-min video</a>
+            <a className="btn hide-phone" href="#video">Watch 1-min video</a>
           </div>
           <div className="trust">
             <span>Free to join</span>
@@ -306,7 +306,23 @@ function Payment() {
   )
 }
 
+// Phones skip the video entirely (not rendered, so nothing downloads).
+const PHONE = '(max-width: 640px)'
+function useIsPhone() {
+  const [phone, setPhone] = useState(() => window.matchMedia?.(PHONE).matches ?? false)
+  useEffect(() => {
+    const mq = window.matchMedia?.(PHONE)
+    if (!mq) return
+    const on = (e) => setPhone(e.matches)
+    mq.addEventListener('change', on)
+    return () => mq.removeEventListener('change', on)
+  }, [])
+  return phone
+}
+
 function Video() {
+  const phone = useIsPhone()
+  if (phone) return null
   return (
     <section id="video">
       <div className="wrap">
