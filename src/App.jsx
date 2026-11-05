@@ -75,7 +75,8 @@ function Nav() {
           <a href="#payment">Rewards</a>
           <a href="#guide">Guide</a>
         </div>
-        <a className="btn primary small" href="#quest">Start earning</a>
+        <a className="btn small hide-phone" href={LINKS.form} target="_blank" rel="noopener noreferrer">Submit task</a>
+        <a className="btn primary small" href="#quest">Get started</a>
       </div>
     </nav>
   )
@@ -142,39 +143,45 @@ function Demo() {
   )
 }
 
+// Scale-style hero: an inset dark panel with the Higgsfield video behind a centred headline.
 function Hero() {
   return (
     <header className="hero" id="top">
-      <div className="wrap">
-        <div className="hero-top">
-          <div>
-            <p className="eyebrow">Paid research study</p>
-            <h1>Get paid to use AI on your real work</h1>
-          </div>
-          <div className="hero-side">
-            <p className="lede">
-              Do one real task with BenchChat, an AI assistant that works inside Gmail, Sheets, Docs and Notion.
-              Earn ₹{REWARDS.base} for each approved task, plus bonuses.
-            </p>
-            <div className="cta">
-              <a className="btn primary" href="#quest">Start earning</a>
-              <a className="text-link" href="#payment">See how pay works <Icon name="arrow" size={15} /></a>
-            </div>
+      <div className="hero-panel">
+        <HeroMedia />
+        <div className="hero-shade" aria-hidden="true" />
+        <div className="hero-content">
+          <p className="eyebrow">Paid research study</p>
+          <h1>Get paid to use AI on your real work</h1>
+          <p className="lede">Do one real task with an AI assistant in your own apps. Earn ₹{REWARDS.base} for each approved task, plus bonuses.</p>
+          <div className="cta">
+            <a className="btn light" href="#quest">Start earning</a>
+            <a className="btn outline-light" href="#payment">See how pay works</a>
           </div>
         </div>
-        <div className="hero-media">
-          <HeroMedia />
-          <div className="stage"><Demo /></div>
-        </div>
-        <Works />
-        <dl className="facts">
-          <div><dt>₹{REWARDS.base}</dt><dd>per approved task</dd></div>
-          <div><dt>+₹{REWARDS.perApp}</dt><dd>for each app you use</dd></div>
-          <div><dt>2–3 days</dt><dd>to your bank or UPI</dd></div>
-          <div><dt>Free</dt><dd>no fees, ever</dd></div>
-        </dl>
+        <a className="scroll-hint" href="#statement">Scroll to explore <span><Icon name="arrow" size={14} /></span></a>
       </div>
     </header>
+  )
+}
+
+// Dark statement block, like Scale's "90% of model builders…" band, with the payout demo.
+function Statement() {
+  return (
+    <section id="statement" className="dark">
+      <div className="wrap statement">
+        <div className="stage"><Demo /></div>
+        <div>
+          <p className="big-quote">Work with the AI until the task is done. Cross 25,000 action tokens. <span>Get ₹{REWARDS.base}, plus ₹{REWARDS.perApp} for every app it used.</span></p>
+          <dl className="facts">
+            <div><dt>₹{REWARDS.base}</dt><dd>per approved task</dd></div>
+            <div><dt>2–3 days</dt><dd>to your bank or UPI</dd></div>
+            <div><dt>Free</dt><dd>no fees, ever</dd></div>
+          </dl>
+        </div>
+      </div>
+      <div className="wrap"><Works /></div>
+    </section>
   )
 }
 
@@ -189,7 +196,7 @@ function HeroMedia() {
   const phone = useIsPhone()
   const still = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
   return (
-    <div className="photo">
+    <div className="hero-media">
       {phone || still
         ? <img src={PHOTOS.hero} alt="A woman working on her laptop at home" width="1600" height="1200" />
         : <video ref={autoplay} src={PHOTOS.heroVideo} poster={PHOTOS.hero} autoPlay muted loop playsInline aria-label="A woman working on her laptop at home" />}
@@ -589,6 +596,7 @@ export default function App() {
     <>
       <Nav />
       <Hero />
+      <Statement />
       <Who />
       <Quest onOpen={setOpen} />
       <Payment />
