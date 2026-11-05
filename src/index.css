@@ -346,3 +346,33 @@ h2 { font-size: clamp(30px, 4vw, 44px); letter-spacing: -.03em; }
   .fold summary { padding: 14px 4px; }
   .total b { font-size: 40px; }
 }
+
+/* palettes inspired by well-known sites (colours only) */
+:root[data-theme="stripe"] {
+  --bg: #f6f9fc; --bg-soft: #eef3f9; --bg-hover: rgba(10, 37, 64, .06);
+  --fg: #425466; --fg-80: rgba(10, 37, 64, .82); --fg-70: #425466; --fg-50: rgba(10, 37, 64, .55); --fg-35: rgba(10, 37, 64, .36);
+  --line: rgba(10, 37, 64, .1); --line-strong: rgba(10, 37, 64, .2);
+  --ink: #0a2540; --accent: #635bff; --accent-soft: rgba(99, 91, 255, .2); --on-accent: #fff;
+}
+:root[data-theme="airbnb"] {
+  --bg: #fff; --bg-soft: #f7f7f7; --bg-hover: rgba(34, 34, 34, .05);
+  --fg: #222; --fg-80: rgba(34, 34, 34, .85); --fg-70: #6a6a6a; --fg-50: rgba(34, 34, 34, .55); --fg-35: rgba(34, 34, 34, .35);
+  --line: #ebebeb; --line-strong: #dddddd;
+  --ink: #222; --accent: #ff385c; --accent-soft: rgba(255, 56, 92, .18); --on-accent: #fff;
+}
+:root[data-theme="mailchimp"] {
+  --bg: #fffdf5; --bg-soft: #fff6cc; --bg-hover: rgba(36, 28, 21, .06);
+  --fg: #241c15; --fg-80: rgba(36, 28, 21, .85); --fg-70: rgba(36, 28, 21, .72); --fg-50: rgba(36, 28, 21, .55); --fg-35: rgba(36, 28, 21, .36);
+  --line: rgba(36, 28, 21, .14); --line-strong: rgba(36, 28, 21, .28);
+  --ink: #241c15; --accent: #241c15; --accent-soft: #ffe01b; --on-accent: #ffe01b;
+}
+:root[data-theme="linear"] {
+  --bg: #08090a; --bg-soft: #141516; --bg-hover: rgba(247, 248, 248, .06);
+  --fg: #f7f8f8; --fg-80: rgba(247, 248, 248, .85); --fg-70: #8a8f98; --fg-50: rgba(247, 248, 248, .5); --fg-35: rgba(247, 248, 248, .32);
+  --line: rgba(247, 248, 248, .08); --line-strong: rgba(247, 248, 248, .16);
+  --ink: #f7f8f8; --accent: #5e6ad2; --accent-soft: rgba(94, 106, 210, .35); --on-accent: #fff;
+}
+:root[data-theme="linear"] .btn.primary { color: #08090a; }
+:root[data-theme="linear"] .demo, :root[data-theme="linear"] .hero-copy .pill { background: #101112; }
+:root[data-theme="linear"] .msg.you { color: #08090a; }
+:root[data-theme="linear"] .logo { color: #08090a; }
