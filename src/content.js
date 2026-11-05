@@ -2,93 +2,230 @@
 
 export const LINKS = {
   bench: 'https://composio.dev/bench/composio-bench',
-  instantTools: 'https://docs.composio.dev/docs/instant-tools',
-  form: 'https://docs.google.com/forms/d/1m3sAg94_yVS2lOZ4hNV8uCD2DiGdap1rs9z9QFa9pMA/viewform',
+  form: 'https://docs.google.com/forms/d/e/1FAIpQLSdrW2QI3b49aJB-BNl1cZ89jmoBvyb1v__4kr38iHAxMZ-QIg/viewform',
   moreIdeas: 'https://drive.google.com/file/d/1lWXdUNAMxp7NNP-wuiBtq956RXDLt6n4/view?usp=sharing',
 }
 
-export const STATS = [
-  { label: 'Time', value: '~20 min' },
-  { label: 'Minimum', value: '25,000 tokens' },
-  { label: 'Language', value: 'English only' },
-  { label: 'Payment', value: '2–3 days' },
+export const VIDEO = {
+  src: '/media/bench-howto.mp4',
+  poster: '/media/bench-howto-poster.jpg',
+}
+
+const img = (name) => `/media/steps/${name}.webp`
+
+// Shown in the sticky strip under the nav, styled like BenchChat's own stats strip.
+export const STRIP = [
+  { icon: 'zap', label: 'Action tokens', value: 'over 25,000' },
+  { icon: 'globe', label: 'Language', value: 'English only' },
+  { icon: 'check', label: 'Task', value: 'real and complete' },
+  { icon: 'wallet', label: 'Pay', value: '₹500 per approved task' },
+]
+
+// Cards under the hero, styled like BenchChat's suggested tasks. Each jumps to a section.
+export const HERO_CARDS = [
+  { title: '₹500 for every approved task, plus a ₹500 bonus at 10', label: 'Payment', href: '#payment' },
+  { title: 'Your chat must go above 25,000 action tokens', label: 'Action tokens', href: '#tokens' },
+  { title: 'Watch the whole flow in one minute', label: 'Video', href: '#video' },
+  { title: 'Copy a ready prompt and make it your own', label: 'Prompts', href: '#prompts' },
 ]
 
 export const BEFORE = [
-  { tag: 'Not a survey', title: 'Hands-on work', text: 'You will work hands-on with an AI assistant for about 20 minutes.' },
-  { tag: 'Commit to it', title: "Stay until it's done", text: 'Do NOT start unless you are confident you can give it a real task and stay with it until the task is complete and successful.' },
-  { tag: 'Language', title: 'Everything in English', text: 'Your task, your messages and the final result must all be in English.' },
+  { tag: 'Required', title: 'Over 25,000 action tokens', text: 'Your conversation must go above 25,000 action tokens. Under 25,000 is not approved and not paid, even if the task is good.' },
+  { tag: 'Required', title: 'Everything in English', text: 'Your task, every message you send and the final result must all be in English. Non-English chats are not approved.' },
+  { tag: 'Required', title: 'A real, genuine task', text: 'Use a real task from your work or daily life and stay with it until it is complete. Fake, repeated or filler prompts are rejected.' },
 ]
 
-export const APPS = ['Gmail', 'Google Drive', 'Google Docs', 'Google Sheets', 'Google Calendar', 'Notion', 'Slack', '+ Instant Tools']
+export const PAYMENT = [
+  { value: '₹500', title: 'For every approved task', text: 'Each successful task you submit earns ₹500 once we approve it.' },
+  { value: '+₹500', title: 'Bonus at 10 approved tasks', text: 'When 10 of your tasks are approved, you get an extra ₹500 on top, after we verify all 10.' },
+  { value: '2–3 days', title: 'Straight to your bank', text: 'After approval, the payment reaches your bank account in about 2–3 days.' },
+]
 
-// Each bullet is either a string or an array of parts: strings and { text, href } links.
+export const PAYMENT_RULES = [
+  'Every task is reviewed manually by our team.',
+  'We pay only after we verify that the conversation is above 25,000 action tokens and the prompts are real and genuine.',
+  'Chats that are not in English, not finished, or padded to raise the token count are not paid.',
+]
+
+export const APPS = ['Google Sheets', 'Google Docs', 'Notion', 'Gmail', 'Google Drive', 'Google Calendar', 'Slack']
+
+export const INSTANT_APPS = ['SerpApi', 'Firecrawl', 'Tavily', 'Exa', 'ElevenLabs', 'People Data Labs', '+ many more']
+
+// Each bullet is either a string or an array of parts: strings, { strong } and { text, href } links.
+// Each step can show screenshots: { src, alt, caption }.
 export const STEPS = [
   {
-    title: 'Create your BenchChat account',
+    title: 'Open BenchChat',
     bullets: [
-      ['Open BenchChat and sign up: ', { text: 'BenchChat sign-up', href: LINKS.bench }],
-      'You can use any email address to sign up.',
+      ['Open ', { text: 'BenchChat', href: LINKS.bench }, ' on a laptop or desktop.'],
+      'Click TRY BENCH at the top right, or type your task in the message box at the bottom.',
+    ],
+    media: [
+      { src: img('open-bench'), alt: 'BenchChat home page', caption: '1 — Try Bench at the top right. 2 — the message box where you type your task.' },
     ],
   },
   {
-    title: 'Connect your apps — as many as you can',
+    title: 'Create your account',
     bullets: [
-      'Inside BenchChat, connect the apps you want the assistant to use, for example Gmail, Google Drive, Google Docs, Google Sheets, Google Calendar, Notion or Slack.',
-      'Connecting is simple: pick the app, sign in to it, and click "Allow". That lets BenchChat work in that app for you.',
-      'The more apps you connect and use, the better.',
+      ['Click ', { strong: 'Continue with Google' }, ' (easiest). New users are signed up automatically.'],
+      'Or click Sign up at the bottom to use any email address.',
+      'Pick your Google account and allow access. You land back in BenchChat, signed in.',
+    ],
+    media: [
+      { src: img('sign-up'), alt: 'Sign-in page', caption: '1 — Continue with Google. 2 — or Sign up with an email address.' },
+      { src: img('google-account'), alt: 'Google account chooser', caption: 'Choose the Google account you want to use.' },
+    ],
+  },
+  {
+    title: 'Open your dashboard',
+    bullets: [
+      ['In BenchChat, click ', { strong: 'Switch' }, ' at the top left, then choose ', { strong: 'FOR YOU' }, '.'],
+      'This is where you connect your apps and, if you want, turn on Instant Tools.',
+    ],
+    media: [
+      { src: img('switch-for-you'), alt: 'Switch menu with For You option', caption: '1 — Switch. 2 — For You (opens the dashboard).' },
+    ],
+  },
+  {
+    title: 'Connect your apps',
+    bullets: [
+      ['Click ', { strong: 'Connect' }, ' next to each app you use, sign in to it and click Allow.'],
+      ['Use ', { strong: 'Google Sheets, Google Docs and Notion' }, ' as much as you can. Gmail, Drive, Calendar and Slack help too.'],
+      'If your task needs an app you have not connected yet, BenchChat also shows a Connect button inside the chat.',
       'Only connect accounts that are yours and that you are allowed to use.',
     ],
+    media: [
+      { src: img('dashboard-apps-instant'), alt: 'Dashboard with apps and Instant Tools', caption: '1 — Connect your apps. 2 and 3 — Instant Tools and its apps. 4 — Settings (to turn Instant on, next step).' },
+    ],
   },
   {
-    title: 'Use Instant Tools',
+    title: 'Turn on Instant Tools',
     optional: true,
     bullets: [
-      'BenchChat also has Instant Tools: ready-to-use tools (for example for web research and finding information) that work without connecting any account.',
-      'New accounts get some free credits for Instant Tools when you sign up, so you can use them straight away.',
-      'Use Instant Tools together with your connected apps in your task.',
-      ['You will have to enable Instant Tools first — ', { text: 'how to enable them', href: LINKS.instantTools }, '.'],
+      ['Click ', { strong: 'Settings' }, ' at the bottom left, open ', { strong: 'General' }, ', and switch ', { strong: 'Instant' }, ' ON.'],
+      ['When you sign up you get ', { strong: '$2 of free credit' }, ' for Instant Tools, so you can use them straight away.'],
+      ['Instant gives you ', { strong: '80+ ready-to-use apps' }, ' with no account or API key: web search, scraping, job search, people and company enrichment, voice, image and video generation, and more.'],
+      'Instant Tools are optional, but we recommend them: research with Instant, then write the results into your connected apps. This makes the task richer and grows the action-token count with real work.',
+    ],
+    media: [
+      { src: img('instant-on'), alt: 'Settings page with Instant switched on', caption: 'Settings → General → Configuration: Instant switched ON.' },
     ],
   },
   {
-    title: 'Give it a realistic, complex, multi-step task',
+    title: 'Go back to Bench and give it a real task — in English',
     bullets: [
-      'Choose a realistic, complex and substantial knowledge-work task that needs investigation, reasoning and a useful final result.',
-      'Describe your task clearly in English: what you want done, the background, and what a good final result looks like.',
-      'The task must have several steps and use as many apps as possible, each more than once. For example: search your emails, pull the details into a spreadsheet, research something online with Instant Tools, then draft a document or reply.',
+      'Click Switch → BENCH, then NEW CHAT.',
+      'Describe a real task in English: what you want done, the background, and what a good final result looks like.',
+      'It must have several steps and use several apps more than once. See the example prompts below.',
+      'Pick a model from the dropdown and click the arrow to send.',
       'Coding, software development and website-building tasks are NOT allowed.',
     ],
-  },
-  {
-    title: 'Keep working with it over multiple turns',
-    bullets: [
-      'Stay in the same conversation. Answer its questions, check what it did, and ask for fixes or next steps.',
-      'This should be a back-and-forth with many messages, not one quick request.',
+    media: [
+      { src: img('type-task'), alt: 'Typing a task in the BenchChat message box', caption: 'Type your task in English.' },
+      { src: img('send-task'), alt: 'Model picker and send button', caption: '1 — choose the model. 2 — send.' },
     ],
-    tip: 'Tip: tell BenchChat to ask you before it sends any email or changes any record.',
   },
   {
-    title: 'Check the action-token count and the final result',
+    title: 'Keep working with it over many turns',
     bullets: [
-      ['Your conversation must exceed ', { strong: '25,000 action tokens' }, '. You can see the count at the top right of the BenchChat page.'],
-      'Make sure the task is complete and successful: the end result actually does what you asked.',
+      'Stay in the same conversation. Answer its questions, check what it did, and ask for fixes and next steps.',
+      'This must be a real back-and-forth with many messages, not one quick request.',
+      'Watch the stats at the top right: model time, tool calls, total tokens and Action tokens.',
+    ],
+    tip: 'Tip: tell BenchChat to ask you before it sends any email or changes any record. Actions in your apps are real.',
+    media: [
+      { src: img('bench-running'), alt: 'BenchChat working on a task', caption: '1 — live stats, including Action tokens. 2 — your first message (turn 1).' },
+    ],
+  },
+  {
+    title: 'Check: over 25,000 action tokens and the task is done',
+    must: true,
+    bullets: [
+      ['The ', { strong: 'Action tokens' }, ' number at the top right must be ', { strong: 'above 25,000' }, '. It updates after each reply finishes.'],
+      'Make sure the task is complete and the result actually does what you asked.',
+      'Then mark the task Success under the last reply.',
+    ],
+    media: [
+      { src: img('multi-turn-tokens'), alt: 'Finished BenchChat task with action tokens', caption: '1 — Action tokens (must be above 25,000). 2 — your follow-up reply (turn 2). 3 — send more follow-ups here. 4 — mark Success.' },
     ],
   },
   {
     title: 'Submit the form — only after the task is complete',
     bullets: [
-      "Once the task is finished and the action-token count is above 25,000, copy the URL of your conversation from your browser's address bar.",
-      'Fill in the submission form with your conversation URL, your final action-token count, and 2–3 sentences about the final result and how you checked it. Without this URL we cannot approve your submission.',
+      "Copy the URL of your conversation from your browser's address bar.",
+      'Fill in the form with your conversation URL, your final action-token count, and 2–3 sentences about the result and how you checked it. Without the URL we cannot approve or pay.',
     ],
     formButton: true,
   },
 ]
 
+export const TOKENS = {
+  counted: [
+    'The AI’s replies to you',
+    'The AI’s reasoning (its thinking steps)',
+    'Everything the AI writes into your apps: Google Doc and Notion text, Google Sheet rows, email drafts, task descriptions',
+  ],
+  notCounted: [
+    'What you type',
+    'What the AI only reads: emails, search results, web pages, files',
+  ],
+  tips: [
+    ['Ask for a ', { strong: 'detailed written result' }, ' in Google Docs, Notion or Google Sheets. Long, real documents and full tables add the most.'],
+    'Ask it to explain its plan before it starts, and to summarise what it did and why at the end.',
+    'Review the result and ask for real improvements: more rows, a better section, a second draft, a check of every link.',
+    'Use several tools in one task: research with Instant Tools, then write into your apps.',
+    'Stay in one long chat. The count adds up across the whole conversation.',
+  ],
+  example: 'Reading 200 emails and replying "done" adds almost nothing. Reading 20 emails and writing 20 real reply drafts adds a lot.',
+  warning: 'Do not pad. Asking it to repeat text, write filler, or do unrelated requests just to raise the count is rejected and not paid.',
+}
+
+// Example prompts. Participants replace the [brackets] with their own real details.
+export const PROMPTS = [
+  {
+    tag: 'Job search',
+    tools: ['Instant: job search', 'Google Sheets', 'Google Docs'],
+    prompt: 'I am a [your role] with [X] years of experience in [skills]. Use the job search tool to find 25 current [role] openings in [cities or remote], posted in the last 2 weeks. Put them in a new Google Sheet with company, title, location, salary if listed, experience required, posting date, link, and a 1–10 fit score with one sentence explaining each score. Then write a Google Doc with my top 5 matches, a tailored cover-letter paragraph for each, and the skills I should highlight. Explain your plan before you start.',
+    followUps: ['Add 10 more remote roles and re-rank the sheet.', 'Rewrite the cover letter for match #2 to be shorter and more specific.', 'Check every link and mark the closed postings.'],
+  },
+  {
+    tag: 'Lead enrichment',
+    tools: ['Instant: People Data Labs', 'Instant: web search', 'Google Sheets', 'Gmail drafts'],
+    prompt: 'I sell [your product or service] to [type of customer]. My leads are in the Google Sheet "[sheet name]" (or: here are 15 names and companies: [list]). Enrich every lead with job title, LinkedIn URL, company size, industry and recent company news. Add the results as new columns, score each lead from 1–10 for fit with a short reason, and write a personalised first email for the top 10 as Gmail drafts. Do not send anything.',
+    followUps: ['Find 10 more similar companies and add them as new leads.', 'Make the emails for the top 3 more specific to their recent news.', 'Add a column with the best next step for each lead.'],
+  },
+  {
+    tag: 'Company enrichment',
+    tools: ['Instant: company enrichment', 'Instant: Exa / Tavily', 'Google Sheets', 'Notion'],
+    prompt: 'I work at [your company], which does [what it does]. Research these competitors: [8 company names]. For each, find headcount, funding, pricing, main features, target customers and launches in the last 6 months. Build a comparison table in a Google Sheet, then write a 2-page competitor brief in Notion with where we are stronger, where we are weaker, and 5 concrete recommendations.',
+    followUps: ['Add 3 competitors I missed.', 'Turn the recommendations into a 4-week action plan in the Notion page.', 'Double-check the pricing numbers against each company’s pricing page.'],
+  },
+  {
+    tag: 'People enrichment',
+    tools: ['Instant: People Data Labs', 'Google Calendar', 'Notion'],
+    prompt: 'Look at my Google Calendar for next week and list every meeting with people outside my company. For each person, use the people enrichment and web search tools to find their role, background, company and recent news or posts. Write a one-page prep brief per meeting in Notion with who they are, what they likely care about, 3 talking points and 2 questions I should ask.',
+    followUps: ['Add a short summary page that links all the briefs.', 'Make the talking points for [meeting] more specific to [topic].'],
+  },
+  {
+    tag: 'Image and video generation',
+    tools: ['Instant: web search', 'Instant: image and video generation', 'Google Sheets', 'Google Docs'],
+    prompt: 'I run [your business or page] for [audience]. Research 5 trending content ideas in [your niche] this month. Build a 2-week content calendar in Google Sheets with date, platform, idea, caption and hashtags. Then generate 3 images for the first three posts and a short video for one of them, and put the captions, image prompts and the video script in a Google Doc.',
+    followUps: ['Make the second image match my brand colours [colours].', 'Write 3 alternative captions for each post and add them to the sheet.'],
+  },
+  {
+    tag: 'Research report',
+    tools: ['Instant: SerpApi / Exa / Firecrawl', 'Google Docs', 'Google Sheets'],
+    prompt: 'I need to decide [a real decision, for example which CRM to buy for a 10-person team]. Research at least 6 options from several sources, scrape their pricing and feature pages, and put a comparison in a Google Sheet. Then write a detailed recommendation in a Google Doc with the trade-offs, total cost for my case, and a final pick with reasons.',
+    followUps: ['Add a section on migration risks.', 'Check every source link and cite it in the doc.'],
+  },
+]
+
 export const REQUIREMENTS = [
-  'Everything is in English.',
-  'It is a realistic, complex and substantial knowledge-work task, done over multiple turns, using multiple apps (your connected apps plus Instant Tools), as many as possible, each more than once. No coding or website-building.',
+  [{ strong: 'Everything is in English' }, ' — your task, every message and the final result.'],
+  [{ strong: 'The conversation is above 25,000 action tokens' }, ', shown at the top right of BenchChat. Real work — researching several sources, building a detailed result, then checking and refining it — gets you there. Repeating actions or adding unrelated requests just to raise the count does not qualify.'],
+  [{ strong: 'The task is real and genuine' }, ': a realistic, complex knowledge-work task from your work or daily life. No coding or website-building.'],
+  'It is done over multiple turns, using multiple apps, each more than once. Instant Tools are optional but recommended.',
   'The task ends complete and successful.',
-  'The conversation exceeds 25,000 action tokens. Real work — researching several sources, building a detailed result, then checking and refining it — gets you there naturally. Repeating actions or adding unrelated requests just to raise the count does not qualify.',
   'You submitted your BenchChat conversation URL through the form after completing the task.',
 ]
 
