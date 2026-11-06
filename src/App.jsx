@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import {
-  LINKS, VIDEO, STRIP, HERO_CARDS, BEFORE, PAYMENT, PAYMENT_RULES, APPS, INSTANT_APPS,
+  LINKS, VIDEO, OFFER, STRIP, HERO_CARDS, BEFORE, PAYMENT, PAYMENT_RULES, APPS, INSTANT_APPS,
   STEPS, TOKENS, PROMPTS, REQUIREMENTS, IDEAS,
 } from './content'
 
@@ -61,7 +61,7 @@ function Nav() {
       <div className="bar">
         <a className="brand" href="#top">BenchChat <Badge kind="green">Study</Badge></a>
         <div className="links">
-          <a href="#payment">Payment</a>
+          {OFFER && <a href="#payment">Payment</a>}
           <a href="#video">Video</a>
           <a href="#steps">Steps</a>
           <a href="#tokens">Tokens</a>
@@ -91,7 +91,7 @@ function Hero() {
         <h1>Do one real task with an AI assistant, start to finish</h1>
         <p className="lede">
           Give BenchChat a real, multi-step task from your work or daily life, in English. Work with it over many messages
-          until it's done and the chat is <Strong>above 25,000 action tokens</Strong>. Every approved task pays ₹500.
+          until it's done and the chat is <Strong>above 25,000 action tokens</Strong>.{OFFER && ` Every approved task pays ${OFFER.amount}.`}
         </p>
         <div className="cta">
           <Button href={LINKS.bench} primary>Open BenchChat</Button>
@@ -305,8 +305,8 @@ function Requirements() {
   return (
     <section id="requirements">
       <div className="wrap">
-        <SectionHead label="Approval" title="Requirements for approval and payment">
-          Your task is approved and paid only if all of these are true.
+        <SectionHead label="Approval" title={OFFER ? 'Requirements for approval and payment' : 'Requirements for approval'}>
+          Your task is {OFFER ? 'approved and paid' : 'accepted'} only if all of these are true.
         </SectionHead>
         <ol className="rows">
           {REQUIREMENTS.map((r, i) => (
@@ -358,8 +358,8 @@ function SubmitBand() {
           <div>
             <Button href={LINKS.form} primary>Open the submission form</Button>
             <p className="sub spaced">
-              You'll be asked for your name, email, phone number, UPI ID, conversation URL, token count and a short summary.
-              We review every task manually. Approved tasks are paid ₹500 to your bank in about 2–3 days.
+              You'll be asked for your {OFFER ? OFFER.formFields : 'name and email'}, conversation URL, token count and a short summary.
+              We review every task manually.{OFFER && ` Approved tasks are paid ${OFFER.amount} ${OFFER.payout}.`}
             </p>
           </div>
         </div>
@@ -392,7 +392,7 @@ export default function App() {
       <Hero />
       <Before />
       <About />
-      <Payment />
+      {OFFER && <Payment />}
       <Video />
       <Steps onOpen={setOpen} />
       <Tokens />

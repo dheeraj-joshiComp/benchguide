@@ -13,39 +13,68 @@ export const VIDEO = {
 
 const img = (name) => `/media/steps/${name}.webp`
 
+// Which version this build is, from VITE_OFFER at build time: 'inr' (default), 'usd', or 'none' for no payment.
+// Compared inline so the build drops the versions it doesn't use.
+const payRules = () => [
+  'Every task is reviewed manually by our team.',
+  'We pay only after we verify that the conversation is above 25,000 action tokens and the prompts are real and genuine.',
+  'Chats that are not in English, not finished, or padded to raise the token count are not paid.',
+]
+export const OFFER =
+  import.meta.env.VITE_OFFER === 'none'
+    ? null
+    : import.meta.env.VITE_OFFER === 'usd'
+      ? {
+          amount: '$10',
+          bonus: null,
+          payout: 'in about 2–3 days',
+          payoutCard: { value: '2–3 days', title: 'Paid soon after review', text: 'After approval, the payment is sent in about 2–3 days.' },
+          formFields: 'contact and payment details',
+          rules: payRules(),
+        }
+      : {
+          amount: '₹500',
+          bonus: '₹500',
+          payout: 'to your bank in about 2–3 days',
+          payoutCard: { value: '2–3 days', title: 'Straight to your bank', text: 'After approval, the payment reaches your bank account in about 2–3 days.' },
+          formFields: 'name, email, phone number, UPI ID',
+          rules: payRules(),
+        }
+const notPaid = OFFER ? ' and not paid' : ''
+
 // Shown in the sticky strip under the nav, styled like BenchChat's own stats strip.
 export const STRIP = [
   { icon: 'zap', label: 'Action tokens', value: 'over 25,000' },
   { icon: 'globe', label: 'Language', value: 'English only' },
   { icon: 'check', label: 'Task', value: 'real and complete' },
-  { icon: 'wallet', label: 'Pay', value: '₹500 per approved task' },
+  ...(OFFER ? [{ icon: 'wallet', label: 'Pay', value: `${OFFER.amount} per approved task` }] : []),
 ]
 
 // Cards under the hero, styled like BenchChat's suggested tasks. Each jumps to a section.
 export const HERO_CARDS = [
-  { title: '₹500 for every approved task, plus a ₹500 bonus at 10', label: 'Payment', href: '#payment' },
+  OFFER
+    ? { title: `${OFFER.amount} for every approved task${OFFER.bonus ? `, plus a ${OFFER.bonus} bonus at 10` : ''}`, label: 'Payment', href: '#payment' }
+    : { title: 'Every step explained, with screenshots', label: 'Steps', href: '#steps' },
   { title: 'Your chat must go above 25,000 action tokens', label: 'Action tokens', href: '#tokens' },
   { title: 'Watch the whole flow in one minute', label: 'Video', href: '#video' },
   { title: 'Copy a ready prompt and make it your own', label: 'Prompts', href: '#prompts' },
 ]
 
 export const BEFORE = [
-  { tag: 'Required', title: 'Over 25,000 action tokens', text: 'Your conversation must go above 25,000 action tokens. Under 25,000 is not approved and not paid, even if the task is good.' },
+  { tag: 'Required', title: 'Over 25,000 action tokens', text: `Your conversation must go above 25,000 action tokens. Under 25,000 is not approved${notPaid}, even if the task is good.` },
   { tag: 'Required', title: 'Everything in English', text: 'Your task, every message you send and the final result must all be in English. Non-English chats are not approved.' },
   { tag: 'Required', title: 'A real, genuine task', text: 'Use a real task from your work or daily life and stay with it until it is complete. Fake, repeated or filler prompts are rejected.' },
 ]
 
-export const PAYMENT = [
-  { value: '₹500', title: 'For every approved task', text: 'Each successful task you submit earns ₹500 once we approve it.' },
-  { value: '+₹500', title: 'Bonus at 10 approved tasks', text: 'When 10 of your tasks are approved, you get an extra ₹500 on top, after we verify all 10.' },
-  { value: '2–3 days', title: 'Straight to your bank', text: 'After approval, the payment reaches your bank account in about 2–3 days.' },
-]
+export const PAYMENT = OFFER
+  ? [
+      { value: OFFER.amount, title: 'For every approved task', text: `Each successful task you submit earns ${OFFER.amount} once we approve it.` },
+      ...(OFFER.bonus ? [{ value: `+${OFFER.bonus}`, title: 'Bonus at 10 approved tasks', text: `When 10 of your tasks are approved, you get an extra ${OFFER.bonus} on top, after we verify all 10.` }] : []),
+      OFFER.payoutCard,
+    ]
+  : []
 
-export const PAYMENT_RULES = [
-  'Every task is reviewed manually by our team.',
-  'We pay only after we verify that the conversation is above 25,000 action tokens and the prompts are real and genuine.',
-  'Chats that are not in English, not finished, or padded to raise the token count are not paid.',
-]
+export const PAYMENT_RULES = OFFER ? OFFER.rules : []
 
 export const APPS = ['Google Sheets', 'Google Docs', 'Notion', 'Gmail', 'Google Drive', 'Google Calendar', 'Slack']
 
@@ -153,7 +182,7 @@ export const STEPS = [
     title: 'Submit the form — only after the task is complete',
     bullets: [
       "Copy the URL of your conversation from your browser's address bar.",
-      'Fill in the form with your conversation URL, your final action-token count, and 2–3 sentences about the result and how you checked it. Without the URL we cannot approve or pay.',
+      `Fill in the form with your conversation URL, your final action-token count, and 2–3 sentences about the result and how you checked it. Without the URL we cannot approve${OFFER ? ' or pay' : ' your task'}.`,
     ],
     formButton: true,
   },
@@ -177,7 +206,7 @@ export const TOKENS = {
     'Stay in one long chat. The count adds up across the whole conversation.',
   ],
   example: 'Reading 200 emails and replying "done" adds almost nothing. Reading 20 emails and writing 20 real reply drafts adds a lot.',
-  warning: 'Do not pad. Asking it to repeat text, write filler, or do unrelated requests just to raise the count is rejected and not paid.',
+  warning: `Do not pad. Asking it to repeat text, write filler, or do unrelated requests just to raise the count is rejected${notPaid}.`,
 }
 
 // Example prompts. Participants replace the [brackets] with their own real details.
