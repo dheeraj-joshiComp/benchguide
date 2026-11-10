@@ -40,6 +40,8 @@ export const OFFER =
           formFields: 'name, email, phone number, UPI ID',
           rules: payRules(),
         }
+// The submission form only exists on the paid versions. The free version has no form at all.
+export const SHOW_FORM = OFFER !== null
 const notPaid = OFFER ? ' and not paid' : ''
 
 // Shown in the sticky strip under the nav, styled like BenchChat's own stats strip.
@@ -178,14 +180,18 @@ export const STEPS = [
       { src: img('multi-turn-tokens'), alt: 'Finished BenchChat task with action tokens', caption: '1 — Action tokens (must be above 25,000). 2 — your follow-up reply (turn 2). 3 — send more follow-ups here. 4 — mark Success.' },
     ],
   },
-  {
-    title: 'Submit the form — only after the task is complete',
-    bullets: [
-      "Copy the URL of your conversation from your browser's address bar.",
-      `Fill in the form with your conversation URL, your final action-token count, and 2–3 sentences about the result and how you checked it. Without the URL we cannot approve${OFFER ? ' or pay' : ' your task'}.`,
-    ],
-    formButton: true,
-  },
+  ...(SHOW_FORM
+    ? [
+        {
+          title: 'Submit the form — only after the task is complete',
+          bullets: [
+            "Copy the URL of your conversation from your browser's address bar.",
+            `Fill in the form with your conversation URL, your final action-token count, and 2–3 sentences about the result and how you checked it. Without the URL we cannot approve${OFFER ? ' or pay' : ' your task'}.`,
+          ],
+          formButton: true,
+        },
+      ]
+    : []),
 ]
 
 export const TOKENS = {
@@ -255,7 +261,7 @@ export const REQUIREMENTS = [
   [{ strong: 'The task is real and genuine' }, ': a realistic, complex knowledge-work task from your work or daily life. No coding or website-building.'],
   'It is done over multiple turns, using multiple apps, each more than once. Instant Tools are optional but recommended.',
   'The task ends complete and successful.',
-  'You submitted your BenchChat conversation URL through the form after completing the task.',
+  ...(SHOW_FORM ? ['You submitted your BenchChat conversation URL through the form after completing the task.'] : []),
 ]
 
 export const IDEAS = [

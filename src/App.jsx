@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import {
-  LINKS, VIDEO, OFFER, STRIP, HERO_CARDS, BEFORE, PAYMENT, PAYMENT_RULES, APPS, INSTANT_APPS,
+  LINKS, VIDEO, OFFER, SHOW_FORM, STRIP, HERO_CARDS, BEFORE, PAYMENT, PAYMENT_RULES, APPS, INSTANT_APPS,
   STEPS, TOKENS, PROMPTS, REQUIREMENTS, IDEAS,
 } from './content'
 
@@ -68,7 +68,7 @@ function Nav() {
           <a href="#prompts">Prompts</a>
           <a href="#requirements">Rules</a>
         </div>
-        <Button href={LINKS.form} primary>Submit</Button>
+        {SHOW_FORM ? <Button href={LINKS.form} primary>Submit</Button> : <Button href={LINKS.bench} primary>Open BenchChat</Button>}
       </div>
       <div className="strip">
         {STRIP.map((s) => (
@@ -342,25 +342,34 @@ function SubmitBand() {
     'Your task is complete and successful.',
     'The action-token count is above 25,000.',
     'Everything is in English.',
-    "You've copied your BenchChat conversation URL.",
+    ...(SHOW_FORM ? ["You've copied your BenchChat conversation URL."] : []),
   ]
   return (
     <section id="submit">
       <div className="wrap">
         <div className="submit">
           <div>
-            <span className="label">Finished?</span>
-            <h2>Submit your conversation</h2>
+            <span className="label">{SHOW_FORM ? 'Finished?' : 'Done when'}</span>
+            <h2>{SHOW_FORM ? 'Submit your conversation' : 'Your task is complete'}</h2>
             <ol className="rows compact">
               {checks.map((c, i) => <li key={i}><span className="label">{pad(i + 1)}</span><div>{c}</div></li>)}
             </ol>
           </div>
           <div>
-            <Button href={LINKS.form} primary>Open the submission form</Button>
-            <p className="sub spaced">
-              You'll be asked for your {OFFER ? OFFER.formFields : 'name and email'}, conversation URL, token count and a short summary.
-              We review every task manually.{OFFER && ` Approved tasks are paid ${OFFER.amount} ${OFFER.payout}.`}
-            </p>
+            {SHOW_FORM ? (
+              <>
+                <Button href={LINKS.form} primary>Open the submission form</Button>
+                <p className="sub spaced">
+                  You'll be asked for your {OFFER ? OFFER.formFields : 'name and email'}, conversation URL, token count and a short summary.
+                  We review every task manually.{OFFER && ` Approved tasks are paid ${OFFER.amount} ${OFFER.payout}.`}
+                </p>
+              </>
+            ) : (
+              <>
+                <Button href={LINKS.bench} primary>Open BenchChat</Button>
+                <p className="sub spaced">Nothing to submit. Mark the task as Success in BenchChat and you're done. Every task is reviewed manually.</p>
+              </>
+            )}
           </div>
         </div>
       </div>
