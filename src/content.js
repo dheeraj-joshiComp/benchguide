@@ -2,7 +2,11 @@
 
 export const LINKS = {
   bench: 'https://composio.dev/bench/composio-bench',
-  form: 'https://docs.google.com/forms/d/e/1FAIpQLSdrW2QI3b49aJB-BNl1cZ89jmoBvyb1v__4kr38iHAxMZ-QIg/viewform',
+  // Separate submission forms: the $10 version asks for PayPal, the ₹500 version asks for UPI.
+  form:
+    import.meta.env.VITE_OFFER === 'usd'
+      ? 'https://docs.google.com/forms/d/e/1FAIpQLSehj_3M6-aZnGQA3eBEHqcN1Z9jL0efG-PAf53wFFntiAzGJQ/viewform'
+      : 'https://docs.google.com/forms/d/e/1FAIpQLSdoRhM-7uyIhYH9mjhT6SiOlyxJVHsq7Zjz4zuB1flyDeB27A/viewform',
   moreIdeas: 'https://drive.google.com/file/d/1lWXdUNAMxp7NNP-wuiBtq956RXDLt6n4/view?usp=sharing',
 }
 
@@ -29,7 +33,7 @@ export const OFFER =
           bonus: null,
           payout: 'in about 2–3 days',
           payoutCard: { value: '2–3 days', title: 'Paid soon after review', text: 'After approval, the payment is sent in about 2–3 days.' },
-          formFields: 'contact and payment details',
+          formFields: 'name, email, country, PayPal email',
           rules: payRules(),
         }
       : {
