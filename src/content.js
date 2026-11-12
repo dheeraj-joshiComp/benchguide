@@ -2,11 +2,11 @@
 
 export const LINKS = {
   bench: 'https://composio.dev/bench/composio-bench',
-  // Separate submission forms: the $10 version asks for PayPal, the ₹500 version asks for UPI.
+  // Separate submission forms: both ask for bank details, only the ₹500 version asks for a UPI ID.
   form:
     import.meta.env.VITE_OFFER === 'usd'
-      ? 'https://docs.google.com/forms/d/e/1FAIpQLSehj_3M6-aZnGQA3eBEHqcN1Z9jL0efG-PAf53wFFntiAzGJQ/viewform'
-      : 'https://docs.google.com/forms/d/e/1FAIpQLSdoRhM-7uyIhYH9mjhT6SiOlyxJVHsq7Zjz4zuB1flyDeB27A/viewform',
+      ? 'https://docs.google.com/forms/d/e/1FAIpQLScjNt8yeXhNLeInbLetT77tc8PjoqPcw1ko9-NEPEU_AL8rNQ/viewform'
+      : 'https://docs.google.com/forms/d/e/1FAIpQLScH6yLB-XJXYHYUHUV5mJC9vNhhX_9VR5wAyo6hiz9buoq3fQ/viewform',
   moreIdeas: 'https://drive.google.com/file/d/1lWXdUNAMxp7NNP-wuiBtq956RXDLt6n4/view?usp=sharing',
 }
 
@@ -33,7 +33,7 @@ export const OFFER =
           bonus: null,
           payout: 'in about 2–3 days',
           payoutCard: { value: '2–3 days', title: 'Paid soon after review', text: 'After approval, the payment is sent in about 2–3 days.' },
-          formFields: 'name, email, country, PayPal email',
+          formFields: 'name, email, phone number and bank details',
           rules: payRules(),
         }
       : {
@@ -41,7 +41,7 @@ export const OFFER =
           bonus: '₹500',
           payout: 'to your bank in about 2–3 days',
           payoutCard: { value: '2–3 days', title: 'Straight to your bank', text: 'After approval, the payment reaches your bank account in about 2–3 days.' },
-          formFields: 'name, email, phone number, UPI ID',
+          formFields: 'name, email, phone number and bank details',
           rules: payRules(),
         }
 // The submission form only exists on the paid versions. The free version has no form at all.
